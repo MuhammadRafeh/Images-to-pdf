@@ -4,8 +4,13 @@ import { Button, TouchableOpacity, StyleSheet, Text } from 'react-native'
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 
-import Main from './Main' //1st Screen 
-import Settings from './Settings' //2nd Screen
+import Main from './components/Main' //1st Screen 
+import Settings from './components/Settings' //2nd Screen
+
+import { Provider } from 'react-redux'
+import store from './Redux/store'
+
+import propTypes from 'prop-types'
 
 const Stack = createStackNavigator()
 
@@ -18,6 +23,10 @@ const SettingButton = props => (
   </TouchableOpacity>
 )
 
+SettingButton.propTypes = {
+  navigate: propTypes.func
+}
+
 function MyStackNavigator() {
   return(
     <Stack.Navigator initialRouteName="Main">
@@ -28,7 +37,7 @@ function MyStackNavigator() {
           headerRight: props => (<SettingButton navigate={navigation.navigate} />)
         })}
       />
-      <Stack.Screen name="Settings" component={Settings} />
+      <Stack.Screen name="Settings" component={Settings}/>
     </Stack.Navigator>
   )
 }
@@ -36,7 +45,9 @@ function MyStackNavigator() {
 function App() {
   return (
     <NavigationContainer>
-      <MyStackNavigator />
+      <Provider store={store}>
+        <MyStackNavigator />
+      </Provider>
     </NavigationContainer>
   );
 }

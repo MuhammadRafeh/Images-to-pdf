@@ -7,6 +7,8 @@ import propTypes from 'prop-types'
 
 import FileViewer from "react-native-file-viewer";
 
+import { openGalleryApi } from './api'
+
 // import  {open}
 
 import {
@@ -23,7 +25,8 @@ class ImageComponent extends React.Component {
     movePicUp: propTypes.func,
     movePicDown: propTypes.func,
     imageObj: propTypes.object,
-
+    addImagesAbove: propTypes.func,
+    addImagesBelow: propTypes.func
   }
 
   state = {
@@ -58,12 +61,16 @@ class ImageComponent extends React.Component {
     }
   }
 
-  handleAddImageAbove = () => {
-    this.props.addImagesAbove()
+  handleAddImageAbove = async () => {
+    const listOfUri = await openGalleryApi()
+    if (!listOfUri) return //if listOfUri is false then return simply
+    this.props.addImagesAbove({id: this.props.imageObj.id, listOfUri})
   }
 
-  handleAddImageBelow = () => {
-    this.props.addImagesBelow()
+  handleAddImageBelow = async () => {
+    const listOfUri = await openGalleryApi()
+    if (!listOfUri) return //if listOfUri is false then return simply
+    this.props.addImagesBelow({id: this.props.imageObj.id, listOfUri})
   }
 
 

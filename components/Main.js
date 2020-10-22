@@ -40,9 +40,7 @@ class Main extends React.Component {
   }
 
   openCamera = async () => {
-    const listOfUri = await openCameraApi()
-    if (!listOfUri) return //Simply Return if something went wrong
-    this.props.addImages(listOfUri)
+    await openCameraApi()
   }
 
   handleMakePDFButton = () => {

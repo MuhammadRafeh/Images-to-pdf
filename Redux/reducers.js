@@ -15,8 +15,8 @@ import {
 
  movePicToUp = (imagePaths, id) => {
 
-    const target = imagePaths.map(obj => obj.id).indexOf(id) //Getting the index of target image
- 
+    const target = imagePaths.findIndex(obj => obj.id === id)
+
     if (target === 0 || target === -1) return imagePaths  //If Image is on Top just simply return
 
     const before = target - 1 //Getting the index of previous image
@@ -34,7 +34,7 @@ import {
 
   movePicToDown = (imagePaths, id) => {
 
-    const target = imagePaths.map(obj => obj.id).indexOf(id) //Getting the index of target image
+    const target = imagePaths.findIndex(obj => obj.id === id)
 
     if (!imagePaths[target + 1] || target === -1) return imagePaths  //If Image is in bottom just simply return
 
@@ -51,26 +51,28 @@ import {
     return listOfUri
   }
 
-  addImagesAbove = (state, obj) => { //obj have id and listOfUri = [{},{}...]
+  addImagesAbove = (state, uriObj) => { //obj have id and listOfUri = [{},{}...]
 
-    const target = state.map(obj => obj.id).indexOf(obj.id) //Getting the index of target image
+    const target = state.findIndex(obj => obj.id === uriObj.id)
 
     let listOfUri = state.slice(0, target) //Getting the array before the target's index
 
-    listOfUri = listOfUri.concat(obj.listOfUri) //Merging the parameters array
+    listOfUri = listOfUri.concat(uriObj.listOfUri) //Merging the parameters array
 
     listOfUri = listOfUri.concat(state.slice(target)) //Concatinating the left array from target's index
 
     return listOfUri
   }
 
-  addImagesBelow = (state, obj) => { //obj have id and listOfUri = [{},{}...]
+  addImagesBelow = (state, uriObj) => { //obj have id and listOfUri = [{},{}...]
 
-    const target = state.map(obj => obj.id).indexOf(obj.id) //Getting the index of target image
+    const target = state.findIndex(obj => obj.id === uriObj.id)
+
+    console.log(target)
 
     let listOfUri = state.slice(0, target+1)
 
-    listOfUri = listOfUri.concat(obj.listOfUri) //Merging the parameters array
+    listOfUri = listOfUri.concat(uriObj.listOfUri) //Merging the parameters array
 
     listOfUri = listOfUri.concat(state.slice(target+1)) //Concatinating the left array from target's index
 

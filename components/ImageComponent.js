@@ -34,7 +34,7 @@ class ImageComponent extends React.Component {
   }
 
   shouldComponentUpdate(nextProps, nextState) {
-    return nextProps.imageObj.uri !== this.props.imageObj.uri || nextProps.resizeMode !== this.props.resizeMode
+    return nextProps.imageObj.id !== this.props.imageObj.id
   }
 
   toggleMenuVisible = () => {
@@ -75,18 +75,24 @@ class ImageComponent extends React.Component {
 
 
   render() {
-    const windowWidth = Dimensions.get('window').width;
-    const windowHeight = Dimensions.get('window').height;
+    let windowWidth = Dimensions.get('window').width;
+    let windowHeight = (Dimensions.get('window').height*53)/100;
+    Image.getSize(this.props.imageObj.uri, (width, height) => {
+      if (width < windowWidth)
+        windowWidth = width
+      if (height < windowHeight)
+        windowHeight = height
+    });
     return(
         <Menu>
           <MenuTrigger>
               <Image
                 style={{
                   width: windowWidth,
-                  height: 200,
+                  height: windowHeight,
                   marginBottom: 13
                 }}
-                resizeMode={this.props.resizeMode}
+                resizeMode='contain'
                 source={{
                   uri: this.props.imageObj.uri
               }}/>

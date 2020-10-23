@@ -14,13 +14,9 @@ import {
 //Reducers for handling New Contacts & Users
 
  movePicToUp = (imagePaths, id) => {
-    const listOfId = []
 
-    imagePaths.forEach(obj => {
-      listOfId.push(obj.id)
-    })
-
-    const target = listOfId.indexOf(id) //Getting the index of target image
+    const target = imagePaths.map(obj => obj.id).indexOf(id) //Getting the index of target image
+ 
     if (target === 0 || target === -1) return imagePaths  //If Image is on Top just simply return
 
     const before = target - 1 //Getting the index of previous image
@@ -37,14 +33,10 @@ import {
   }
 
   movePicToDown = (imagePaths, id) => {
-    const listOfId = []
 
-    imagePaths.forEach(obj => {
-      listOfId.push(obj.id)
-    })
+    const target = imagePaths.map(obj => obj.id).indexOf(id) //Getting the index of target image
 
-    const target = listOfId.indexOf(id) //Getting the index of target image
-      if (!imagePaths[target + 1] || target === -1) return imagePaths  //If Image is in bottom just simply return
+    if (!imagePaths[target + 1] || target === -1) return imagePaths  //If Image is in bottom just simply return
 
     const after = target + 1 //Getting the index of next image
 
@@ -60,13 +52,8 @@ import {
   }
 
   addImagesAbove = (state, obj) => { //obj have id and listOfUri = [{},{}...]
-    const listOfId = []
 
-    state.forEach(obj => {
-      listOfId.push(obj.id)
-    })
-
-    const target = listOfId.indexOf(obj.id) //From this we have to insert the images above
+    const target = state.map(obj => obj.id).indexOf(obj.id) //Getting the index of target image
 
     let listOfUri = state.slice(0, target) //Getting the array before the target's index
 
@@ -78,13 +65,8 @@ import {
   }
 
   addImagesBelow = (state, obj) => { //obj have id and listOfUri = [{},{}...]
-    const listOfId = []
 
-    state.forEach(obj => {
-      listOfId.push(obj.id)
-    })
-
-    const target = listOfId.indexOf(obj.id) //From this we have to insert the images Below
+    const target = state.map(obj => obj.id).indexOf(obj.id) //Getting the index of target image
 
     let listOfUri = state.slice(0, target+1)
 

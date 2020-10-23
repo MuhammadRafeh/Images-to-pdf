@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyleSheet, Text, View, ScrollView } from 'react-native';
+import { StyleSheet, Text, View, ScrollView, FlatList } from 'react-native';
 
 import ImageComponent from './ImageComponent';
 import { MenuProvider } from 'react-native-popup-menu';
@@ -57,24 +57,29 @@ class Main extends React.Component {
     }
   }
 
+  renderItem = ({ item }) => (
+    <ImageComponent
+      imageObj={item}
+      movePicUp={this.props.movePicUp}
+      movePicDown={this.props.movePicDown}
+      deleteImage={this.props.deleteImage}
+      resizeMode={this.props.resizeMode}
+      addImagesAbove={this.props.addImagesAbove}
+      addImagesBelow={this.props.addImagesBelow}
+    />  
+  )
+
   render() {
     return (
       <View style={styles.container}>
         <MenuProvider>
-          <ScrollView>
-            {this.props.imagePaths.map(uri =>
-              <ImageComponent 
-                imageObj={uri}
-                key={uri.id}
-                movePicUp={this.props.movePicUp}
-                movePicDown={this.props.movePicDown}
-                deleteImage={this.props.deleteImage}
-                resizeMode={this.props.resizeMode}
-                addImagesAbove={this.props.addImagesAbove}
-                addImagesBelow={this.props.addImagesBelow}
-              />)
-            }
-          </ScrollView>
+          <FlatList
+            data={this.props.imagePaths}
+            renderItem={this.renderItem}
+            keyExtractor={item => item.id.toString()}
+            // ref="flatList"
+            // onContentSizeChange={()=> this.refs.flatList.scrollToEnd()}
+          />
         </MenuProvider>
         {this.state.showDialog && 
           <DialogComponent

@@ -106,7 +106,7 @@ const imageReducer = (state = [], action) => {
 	}
 }
 
-const settingReducer = (state = {quality: 0.7, imageSize: 50, resizeMode: 'cover' }, action) => {
+const settingReducer = (state = {quality: 0.7, imageSize: 50, resizeMode: 'contain' }, action) => {
 	switch (action.type) {
 		case UPDATE_PDF_QUALITY:
 			return {...state, quality: action.payload}

@@ -22,7 +22,8 @@ import { connect } from 'react-redux'
 
 class Main extends React.Component {
   state = {
-    showDialog: false
+    showDialog: false,
+    selectedId: null
   }
 
   componentDidMount() {
@@ -66,6 +67,7 @@ class Main extends React.Component {
       resizeMode={this.props.resizeMode}
       addImagesAbove={this.props.addImagesAbove}
       addImagesBelow={this.props.addImagesBelow}
+      imageSize={this.props.imageSize}
     />  
   )
 
@@ -77,8 +79,8 @@ class Main extends React.Component {
             data={this.props.imagePaths}
             renderItem={this.renderItem}
             keyExtractor={item => item.id.toString()}
-            // ref="flatList"
-            // onContentSizeChange={()=> this.refs.flatList.scrollToEnd()}
+            extraData={this.state.selectedId}
+            ref={"flatList"}
           />
         </MenuProvider>
         {this.state.showDialog && 
@@ -86,7 +88,7 @@ class Main extends React.Component {
             closeDialog={this.toggleShowDialog} //Prop to close Pop Up dialog
             imagesPath={this.props.imagePaths}
         />}
-        <Buttons 
+        <Buttons
           handleMakePDFButton={this.handleMakePDFButton}
           openCamera={this.openCamera}
           openGallery={this.openGallery}
@@ -98,7 +100,8 @@ class Main extends React.Component {
 
 const mapStateToProps = (state) => ({
   imagePaths: state.imagesPath,
-  resizeMode: state.settings.resizeMode
+  resizeMode: state.settings.resizeMode,
+  imageSize: state.settings.imageSize
 })
 
 const mapDispatchToProps = {

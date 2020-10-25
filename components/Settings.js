@@ -8,7 +8,7 @@ import RadioForm, {RadioButton, RadioButtonInput, RadioButtonLabel} from 'react-
 import propTypes from 'prop-types'
 
 import { connect } from 'react-redux'
-import { updateQuality, updateResizeMode } from '../Redux/actions'
+import { updateQuality, updateResizeMode, updateImageSize } from '../Redux/actions'
 
 class Settings extends React.PureComponent {
 	static propTypes = {
@@ -20,7 +20,7 @@ class Settings extends React.PureComponent {
 
 	state = {
 		pdfQuality: this.props.quality, //default
-		imageSize: 2,
+		imageSize: this.props.imageSize,
 		resizeMode: this.props.resizeMode, //string
 	}
 
@@ -31,6 +31,10 @@ class Settings extends React.PureComponent {
 
 		if (this.state.resizeMode!==this.props.resizeMode){
 			this.props.updateResizeMode(this.state.resizeMode)
+		}
+
+		if (this.state.imageSize!==this.props.imageSize){
+			this.props.updateImageSize(this.state.imageSize)
 		}
 	}
 
@@ -59,8 +63,8 @@ class Settings extends React.PureComponent {
 
 	render() {
 		const radio_props = [
-		  {label: 'Full               ', value: 'contain' },
-		  {label: 'Short', value: 'cover' }
+		  {label: 'Full (Slow)              ', value: 'contain' },
+		  {label: 'Short (Fast)', value: 'cover' }
 		];
 		let initial = 0
 		if (this.state.resizeMode==='cover'){
@@ -81,13 +85,13 @@ class Settings extends React.PureComponent {
         		/>
         		<Divider style={{ backgroundColor: 'black', marginVertical: 10 }} />
         		<Text h4>Images Size</Text>
-				<Text style={{textAlign: 'right'}}>{this.state.imageSize * 10}%</Text>
+				<Text style={{textAlign: 'right'}}>{this.state.imageSize}%</Text>
         		<Slider
 		          value={this.state.imageSize}
 		          onValueChange={this.handleImageSizeChange}
-		          maximumValue={10}
-		          minimumValue={1}
-		          step={1}
+		          maximumValue={100}
+		          minimumValue={10}
+		          step={10}
 		          thumbTintColor={'#C0C0C0'}
 		          style={{marginHorizontal: 3}}
         		/>
@@ -109,12 +113,14 @@ class Settings extends React.PureComponent {
 
 const mapStateToProps = state => ({
 	quality: state.settings.quality,
-	resizeMode: state.settings.resizeMode
+	resizeMode: state.settings.resizeMode,
+	imageSize: state.settings.imageSize
 })
 
 const mapDispatchToProps = {
 	updateQuality: updateQuality,
-	updateResizeMode: updateResizeMode
+	updateResizeMode: updateResizeMode,
+	updateImageSize: updateImageSize
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(Settings)

@@ -35,7 +35,7 @@ class ImageComponent extends React.Component {
   }
 
   shouldComponentUpdate(nextProps, nextState) {
-    return nextProps.imageObj.id !== this.props.imageObj.id || nextProps.imageSize !== this.props.imageSize || this.props.resizeMode || nextProps.resizeMode
+    return nextProps.imageObj.id !== this.props.imageObj.id || nextProps.imageSize !== this.props.imageSize || this.props.resizeMode !== nextProps.resizeMode
   }
 
   toggleMenuVisible = () => {

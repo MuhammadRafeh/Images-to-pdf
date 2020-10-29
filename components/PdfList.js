@@ -51,7 +51,7 @@ class PdfList extends React.Component {
 	}
 
 	renderItem = ({ item }) => { //item will be a object
-		let show = '' // min: hours: date: just now
+		let show = '' // min: hours: date: just now: yesterday
 		const curTime = new Date()
 		const difTime = new Date(curTime - item.time)
 		const minutes = difTime.getUTCMinutes()
@@ -67,10 +67,11 @@ class PdfList extends React.Component {
 				} else {
 					show = 'hours'
 				}
-			} else {
-				show = 'date'
-			}
-		} 
+			} 
+		} else {
+			// show = 'date'
+			show = difTime.getUTCDate() === 1 && 'yesterday'
+		}
 
 		return ( 
 			<TouchableOpacity
@@ -83,6 +84,7 @@ class PdfList extends React.Component {
 					{show === 'min' && <Text style={styles.belowName}>{minutes} minutes ago - {item.size}</Text>}
 					{show === 'just now' && <Text style={styles.belowName}>Just now - {item.size}</Text>}
 					{show === 'hours' && <Text style={styles.belowName}>{hours} hours ago - {item.size}</Text>}
+					{show === 'yesterday' && <Text style={styles.belowName}>Yesterday - {item.size}</Text>}
 					{show === 'date' && <Text style={styles.belowName}>{item.time.getUTCDate()}/{item.time.getUTCMonth()+1}/{item.time.getUTCFullYear()} - {item.size}</Text>}
 				</View>
 			</TouchableOpacity>

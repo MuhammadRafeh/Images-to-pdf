@@ -59,23 +59,31 @@ class PdfList extends React.Component {
 
 		show = curTime.getDate() === item.time.getDate() ? 'hoursORmin' : 'date'
 
+		const curYear = curTime.getUTCFullYear()
+		const docYear = item.time.getUTCFullYear()
+
+		const curMonth = curTime.getUTCMonth()
+		const docMonth = item.time.getUTCMonth()
+
 		if (show === 'hoursORmin') {
-			if (curTime.getUTCFullYear() === item.time.getUTCFullYear() && curTime.getUTCMonth() === item.time.getUTCMonth()){
+			if (curYear=== docYear && curMonth === docMonth){
 				//Here now we have to decide what to show, hours/min
 				if (hours === 0){
 					show = minutes === 0 ? 'just now' : 'min'
 				} else {
 					show = 'hours'
 				}
-			} 
+			} else {
+				show = 'date'
+			}
 		} else {
 			// show = 'date'
-			show = difTime.getUTCDate() === 1 && 'yesterday'
+			show = (curYear === docYear && curMonth === docMonth && difTime.getUTCDate() === 1) && 'yesterday'
 		}
 
 		return ( 
 			<TouchableOpacity
-				style={{flexDirection: 'row', paddingBottom: 18}}
+				style={{flexDirection: 'row', paddingBottom: 16}}
 				onPress={() => this.onPressDoc(item.path)}
 			>
 				<Icon name="document" size={35} color="blue" />
@@ -85,7 +93,7 @@ class PdfList extends React.Component {
 					{show === 'just now' && <Text style={styles.belowName}>Just now - {item.size}</Text>}
 					{show === 'hours' && <Text style={styles.belowName}>{hours} hours ago - {item.size}</Text>}
 					{show === 'yesterday' && <Text style={styles.belowName}>Yesterday - {item.size}</Text>}
-					{show === 'date' && <Text style={styles.belowName}>{item.time.getUTCDate()}/{item.time.getUTCMonth()+1}/{item.time.getUTCFullYear()} - {item.size}</Text>}
+					{show === 'date' && <Text style={styles.belowName}>{item.time.getUTCDate()}/{docMonth+1}/{docYear} - {item.size}</Text>}
 				</View>
 			</TouchableOpacity>
 		)
@@ -120,7 +128,8 @@ const styles = StyleSheet.create({
   pdfName: {
   	marginLeft: 10,
   	fontWeight: 'bold',
-  	paddingTop: 1
+  	paddingTop: 1,
+  	fontSize: 15
   },
   belowName: {
   	marginLeft: 10,

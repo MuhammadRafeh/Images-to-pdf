@@ -6,6 +6,7 @@ import { createStackNavigator } from '@react-navigation/stack';
 
 import Main from './components/Main' //1st Screen 
 import Settings from './components/Settings' //2nd Screen
+import PdfList from './components/PdfList'
 
 import { Provider } from 'react-redux'
 import store from './Redux/store'
@@ -38,6 +39,7 @@ function MyStackNavigator() {
         })}
       />
       <Stack.Screen name="Settings" component={Settings}/>
+      <Stack.Screen name="Created PDF's" component={PdfList}/>
     </Stack.Navigator>
   )
 }

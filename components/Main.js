@@ -92,6 +92,7 @@ class Main extends React.Component {
           handleMakePDFButton={this.handleMakePDFButton}
           openCamera={this.openCamera}
           openGallery={this.openGallery}
+          navigateToPDF={this.props.navigation}
         />
       </View>
     )

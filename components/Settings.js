@@ -38,11 +38,16 @@ class Settings extends React.PureComponent {
 		}
 	}
 
-	componentDidMount() {
+	headerRightButton = () => {
 		this.props.navigation.setOptions({
     		headerRight: () => (
         		<Button type='clear' onPress={this.handleHeaderButtonPressed} title="Save" />)
     	})
+	}
+
+	componentDidMount() {
+		this.headerRightButton()
+		// getting 
 	}
 
 	handleOnPDFQualityChange = value => {
@@ -106,11 +111,25 @@ class Settings extends React.PureComponent {
 				/>
         		</View>
         		<Divider style={{ backgroundColor: 'black', marginVertical: 10 }} />
+        		<Text h4>PDF Storage Location</Text>
+        		<Text style={{paddingTop: 8}}>Interal Storage: Android/data/com.ImagesToPDF/files/</Text>
+        		<Divider style={{ backgroundColor: 'black', marginVertical: 10 }} />
+        		
 			</View>
 		)
 	}
 }
+//   /storage/emulated/0/Android/data/com.practiceProject/files/
 
+//   RNFS.readDir("/storage/emulated/0/Android/data/com.practiceProject/files/").then(files => {
+//       console.log(files)
+//       // console.log(files[0].isFile())
+// })
+// .catch(err => {
+
+//     console.log(err.message, err.code);
+
+// });
 const mapStateToProps = state => ({
 	quality: state.settings.quality,
 	resizeMode: state.settings.resizeMode,
@@ -129,7 +148,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     alignItems: 'stretch', 
-    justifyContent: 'center',
-    marginHorizontal: 10
+    marginHorizontal: 10,
+    paddingTop: 5
   }
 });

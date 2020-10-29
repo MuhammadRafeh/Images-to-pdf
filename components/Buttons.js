@@ -14,6 +14,9 @@ const Buttons = props => (
       	    <View style={styles.openCamera}>
       	       <Button title="Open Camera" type="outline" onPress={props.openCamera}/>
       	    </View>
+            <View style={styles.openPDF}>
+               <Button title="Created PDF" type="outline" onPress={() => {props.navigateToPDF.navigate("Created PDF's")}}/>
+            </View>
 	    </View>
 	    <TouchableOpacity
 	      style={styles.makePDF}
@@ -49,6 +52,10 @@ const styles = StyleSheet.create({
     paddingRight: 5
   },
   openCamera: {
+    paddingLeft: 5,
+    paddingRight: 5
+  },
+  openPDF: {
     paddingLeft: 5
   }
 });

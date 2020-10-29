@@ -27,7 +27,6 @@ class Main extends React.Component {
   }
 
   componentDidMount() {
-    this.id = 0
     this.props.navigation.setOptions({
         headerLeft: () => (
           <Button title="Clear" buttonStyle={{marginLeft: 10}} type='clear' onPress={this.handleClearImages}/>)

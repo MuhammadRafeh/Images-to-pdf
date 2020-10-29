@@ -1,15 +1,17 @@
 import React from 'react'
-import { View, FlatList, StyleSheet, Text, TouchableOpacity } from 'react-native'
+import { View, FlatList, StyleSheet, Text, TouchableOpacity, TouchableHighlight } from 'react-native'
 import * as RNFS from 'react-native-fs';
 import Icon from 'react-native-vector-icons/Ionicons'
 
+import { Button, Divider } from 'react-native-elements';
 import FileViewer from "react-native-file-viewer";
 
 class PdfList extends React.Component {
 
 	state = {
 		pdfInfo: [],
-		selectedIds: []
+		selectedIds: [],
+		isNavigationChanged: false
 	}
 
 	formatBytes = (a,b=2) => {
@@ -64,8 +66,6 @@ class PdfList extends React.Component {
 	    	this.setState({selectedIds: list})
 	    }
 
-	    
-
 	}
 
 	onLongPressDoc = id => {
@@ -74,7 +74,72 @@ class PdfList extends React.Component {
 				selectedIds: [...prevState.selectedIds, id]
 			}))
 		}
-	} 
+	}
+
+	componentDidUpdate(){
+		if (this.state.selectedIds.length > 0 && !this.state.isNavigationChanged){
+			//Code to set Header when something is selected
+
+			this.props.navigation.setOptions({
+	    		headerRight: () => (
+	    			<View style={{flexDirection: 'row', alignItems: 'center'}}> 
+	    				<TouchableOpacity
+		        			onPress={() => {
+		        				const list = this.state.pdfInfo.map(obj => obj.id)
+		        				this.setState({selectedIds: list})
+		        			}}
+		        			style={{marginRight:18}}
+						>
+		        			<Icon name="md-checkmark-done-sharp" size={25} color="black"/>
+		        		</TouchableOpacity>
+		        		<TouchableOpacity
+		        			onPress={() => console.log(1)}
+		        			style={{marginRight:20}}
+						>
+		        			<Icon name="md-share-social" size={25} color="black"/>
+		        		</TouchableOpacity>
+		        		<TouchableOpacity 
+		        			onPress={() => console.log(1)}
+		        			style={{marginRight:15}}
+						>
+		        			<Icon name="md-trash-bin" size={25} color="black"/>
+		        		</TouchableOpacity>
+	    			</View>
+	    		),
+	    		headerLeft: () => (
+	    			<TouchableOpacity onPress={() => {this.setState({selectedIds: []})}}>
+	    				<Icon name="md-close" size={25} style={{marginLeft: 12, color: 'black'}}/>
+	    			</TouchableOpacity>
+	    		),
+	    		headerStyle: {
+		            backgroundColor: '#C0C0C0',
+		        },
+		        headerTintColor: 'black',
+		        headerTitle: 'Actions'
+    		})
+    		this.setState({isNavigationChanged: true})
+    		return
+		}
+		if (this.state.selectedIds.length === 0 && this.state.isNavigationChanged === true) {
+			//Code to set navigation when nothing is selected
+
+			this.props.navigation.setOptions({
+	    		headerRight: () => (<View />),
+	    		headerStyle: {
+		            backgroundColor: 'white',
+		        },
+		        headerLeft: (props) => (
+		        	<TouchableOpacity {...props}>
+		        		<Icon name='md-arrow-back' size={25} style={{marginLeft: 14}} color={'black'}/>
+		        	</TouchableOpacity>
+		        ),
+		        headerTitle: "Created PDF's",
+		        headerTintColor: 'black'
+    		})
+    		this.setState({isNavigationChanged: false})
+		}
+
+	}
 
 	renderItem = ({ item }) => { //item will be a object
 		let show = '' // min: hours: date: just now: yesterday
@@ -108,22 +173,22 @@ class PdfList extends React.Component {
 		}
 
 
-		const styles = this.state.selectedIds.includes(item.id) ? {flexDirection: 'row', paddingBottom: 8, paddingTop: 8, backgroundColor: 'yellow'} : {flexDirection: 'row', paddingBottom: 8, paddingTop: 8}
+		const defineStyle = this.state.selectedIds.includes(item.id) ? {flexDirection: 'row', paddingBottom: 8, paddingTop: 8, backgroundColor: '#C0C0C0', paddingLeft: 15} : {flexDirection: 'row', paddingBottom: 8, paddingTop: 8, paddingLeft: 15}
 
 		return ( 
 			<TouchableOpacity
-				style={styles}
+				style={defineStyle}
 				onPress={() => this.onPressDoc(item.path, item.id)}
 				onLongPress={() => {this.onLongPressDoc(item.id)}}
 			>
-				<Icon name="document" size={35} color="blue" />
+				<Icon name="document" size={40} color="blue" />
 				<View style={{flexDirection: 'column'}}>
 					<Text style={styles.pdfName}>{item.name}</Text>
-					{show === 'min' && <Text style={styles.belowName}>{minutes} minutes ago - {item.size}</Text>}
-					{show === 'just now' && <Text style={styles.belowName}>Just now - {item.size}</Text>}
-					{show === 'hours' && <Text style={styles.belowName}>{hours} hours ago - {item.size}</Text>}
-					{show === 'yesterday' && <Text style={styles.belowName}>Yesterday - {item.size}</Text>}
-					{show === 'date' && <Text style={styles.belowName}>{item.time.getUTCDate()}/{docMonth+1}/{docYear} - {item.size}</Text>}
+					{show === 'min' && <Text style={styles.belowNameRow}>{minutes} minutes ago - {item.size}</Text>}
+					{show === 'just now' && <Text style={styles.belowNameRow}>Just now - {item.size}</Text>}
+					{show === 'hours' && <Text style={styles.belowNameRow}>{hours} hours ago - {item.size}</Text>}
+					{show === 'yesterday' && <Text style={styles.belowNameRow}>Yesterday - {item.size}</Text>}
+					{show === 'date' && <Text style={styles.belowNameRow}>{item.time.getUTCDate()}/{docMonth+1}/{docYear} - {item.size}</Text>}
 				</View>
 			</TouchableOpacity>
 		)
@@ -153,16 +218,16 @@ export default PdfList
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
-    padding: 25
+    backgroundColor: '#fff'
   },
   pdfName: {
   	marginLeft: 10,
   	fontWeight: 'bold',
-  	paddingTop: 1,
+  	paddingTop: 2,
   	fontSize: 15
   },
-  belowName: {
+  belowNameRow: {
   	marginLeft: 10,
+  	paddingTop: 2
   }
 });

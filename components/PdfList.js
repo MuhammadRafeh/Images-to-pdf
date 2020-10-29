@@ -9,6 +9,7 @@ class PdfList extends React.Component {
 
 	state = {
 		pdfInfo: [],
+		selectedIds: []
 	}
 
 	formatBytes = (a,b=2) => {
@@ -42,13 +43,38 @@ class PdfList extends React.Component {
 		}
 	}
 
-	onPressDoc = async (uri) => {
-		try{
-	      await FileViewer.open(uri);
-	    } catch(e) {
-	      // Error
+	onPressDoc = async (uri, id) => {
+
+		if (this.state.selectedIds.length === 0){
+	    	 try{
+	      		await FileViewer.open(uri);
+	    	} catch(e) {
+	     	 // Error
+	    	}
+	    	return
 	    }
+		
+	    if (!this.state.selectedIds.includes(id)){ //if id not exist in list
+	    	this.setState(prevState => ({
+				selectedIds: [...prevState.selectedIds, id]
+			}))
+	    } else {
+	    	const list = [...this.state.selectedIds]
+	    	list.splice(this.state.selectedIds.indexOf(id), 1);
+	    	this.setState({selectedIds: list})
+	    }
+
+	    
+
 	}
+
+	onLongPressDoc = id => {
+		if (this.state.selectedIds.length === 0) {
+			this.setState(prevState => ({
+				selectedIds: [...prevState.selectedIds, id]
+			}))
+		}
+	} 
 
 	renderItem = ({ item }) => { //item will be a object
 		let show = '' // min: hours: date: just now: yesterday
@@ -81,10 +107,14 @@ class PdfList extends React.Component {
 			show = (curYear === docYear && curMonth === docMonth && difTime.getUTCDate() === 1) && 'yesterday'
 		}
 
+
+		const styles = this.state.selectedIds.includes(item.id) ? {flexDirection: 'row', paddingBottom: 8, paddingTop: 8, backgroundColor: 'yellow'} : {flexDirection: 'row', paddingBottom: 8, paddingTop: 8}
+
 		return ( 
 			<TouchableOpacity
-				style={{flexDirection: 'row', paddingBottom: 16}}
-				onPress={() => this.onPressDoc(item.path)}
+				style={styles}
+				onPress={() => this.onPressDoc(item.path, item.id)}
+				onLongPress={() => {this.onLongPressDoc(item.id)}}
 			>
 				<Icon name="document" size={35} color="blue" />
 				<View style={{flexDirection: 'column'}}>
@@ -111,6 +141,7 @@ class PdfList extends React.Component {
 					data={this.state.pdfInfo}
 					renderItem={this.renderItem}
 					keyExtractor={item => item.id.toString()}
+					extraData={this.state.selectedIds}
 				/>
 			</View>
 		)

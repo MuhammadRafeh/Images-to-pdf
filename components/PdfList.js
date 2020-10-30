@@ -60,7 +60,7 @@ class PdfList extends React.Component {
 	    	this.setState(prevState => ({
 				selectedIds: [...prevState.selectedIds, id]
 			}))
-	    } else {
+	    } else { // In this section below we want to unselect this id
 	    	const list = [...this.state.selectedIds]
 	    	list.splice(this.state.selectedIds.indexOf(id), 1);
 	    	this.setState({selectedIds: list})
@@ -76,7 +76,26 @@ class PdfList extends React.Component {
 		}
 	}
 
-	componentDidUpdate(){
+	fileDeletion = () => {
+		const remaining = []
+
+		const pathList = this.state.pdfInfo.filter(obj => {
+			if (this.state.selectedIds.includes(obj.id)) return true
+			remaining.push(obj)
+		})
+		pathList.forEach(obj => {
+			RNFS.unlink(obj.path)
+		  		.then(() => {
+		   	 		console.log('FILE DELETED');
+		  	})
+				.catch((err) => {
+		   			console.log(err.message);
+		 	 });
+		})
+		this.setState({selectedIds: [], pdfInfo: remaining})
+	}
+
+	updateHeader = () => {
 		if (this.state.selectedIds.length > 0 && !this.state.isNavigationChanged){
 			//Code to set Header when something is selected
 
@@ -99,7 +118,7 @@ class PdfList extends React.Component {
 		        			<Icon name="md-share-social" size={25} color="black"/>
 		        		</TouchableOpacity>
 		        		<TouchableOpacity 
-		        			onPress={() => console.log(1)}
+		        			onPress={this.fileDeletion}
 		        			style={{marginRight:15}}
 						>
 		        			<Icon name="md-trash-bin" size={25} color="black"/>
@@ -141,6 +160,10 @@ class PdfList extends React.Component {
 
 	}
 
+	componentDidUpdate(){
+		this.updateHeader()
+	}
+
 	renderItem = ({ item }) => { //item will be a object
 		let show = '' // min: hours: date: just now: yesterday
 		const curTime = new Date()
@@ -159,17 +182,15 @@ class PdfList extends React.Component {
 		if (show === 'hoursORmin') {
 			if (curYear=== docYear && curMonth === docMonth){
 				//Here now we have to decide what to show, hours/min
-				if (hours === 0){
+				if (hours === 0)
 					show = minutes === 0 ? 'just now' : 'min'
-				} else {
+				else 
 					show = 'hours'
-				}
-			} else {
+			} else 
 				show = 'date'
-			}
+			
 		} else {
-			// show = 'date'
-			show = (curYear === docYear && curMonth === docMonth && difTime.getUTCDate() === 1) && 'yesterday'
+			show = (curYear === docYear && curMonth === docMonth && (curTime.getUTCDate() === item.time.getUTCDate()+1)) ? 'yesterday' : 'date'
 		}
 
 
@@ -181,7 +202,7 @@ class PdfList extends React.Component {
 				onPress={() => this.onPressDoc(item.path, item.id)}
 				onLongPress={() => {this.onLongPressDoc(item.id)}}
 			>
-				<Icon name="document" size={40} color="blue" />
+				<Icon name="document" size={40} color="grey" />
 				<View style={{flexDirection: 'column'}}>
 					<Text style={styles.pdfName}>{item.name}</Text>
 					{show === 'min' && <Text style={styles.belowNameRow}>{minutes} minutes ago - {item.size}</Text>}

@@ -11,8 +11,7 @@ class PdfList extends React.Component {
 
 	state = {
 		pdfInfo: [],
-		selectedIds: [],
-		isNavigationChanged: false
+		selectedIds: []
 	}
 
 	formatBytes = (a,b=2) => {
@@ -97,7 +96,7 @@ class PdfList extends React.Component {
 	}
 
 	updateHeader = () => {
-		if (this.state.selectedIds.length > 0 && !this.state.isNavigationChanged){
+		if (this.state.selectedIds.length > 0 && !this.isNavigationChanged){
 			//Code to set Header when something is selected
 
 			this.props.navigation.setOptions({
@@ -153,10 +152,10 @@ class PdfList extends React.Component {
 		        headerTintColor: 'black',
 		        headerTitle: 'Actions'
     		})
-    		this.setState({isNavigationChanged: true})
+    		this.isNavigationChanged = true
     		return
 		}
-		if (this.state.selectedIds.length === 0 && this.state.isNavigationChanged === true) {
+		if (this.state.selectedIds.length === 0 && this.isNavigationChanged === true) {
 			//Code to set navigation when nothing is selected
 
 			this.props.navigation.setOptions({
@@ -172,7 +171,7 @@ class PdfList extends React.Component {
 		        headerTitle: "Created PDF's",
 		        headerTintColor: 'black'
     		})
-    		this.setState({isNavigationChanged: false})
+    		this.isNavigationChanged = false
 		}
 
 	}
@@ -235,6 +234,7 @@ class PdfList extends React.Component {
 	componentDidMount() {
 		this.id = 0
 		this.fetchDataFromDirectory()
+		this.isNavigationChanged = false
 	}
 
 	render() {

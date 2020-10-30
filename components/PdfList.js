@@ -5,6 +5,7 @@ import Icon from 'react-native-vector-icons/Ionicons'
 
 import { Button, Divider } from 'react-native-elements';
 import FileViewer from "react-native-file-viewer";
+import Share from 'react-native-share';
 
 class PdfList extends React.Component {
 
@@ -112,7 +113,23 @@ class PdfList extends React.Component {
 		        			<Icon name="md-checkmark-done-sharp" size={25} color="black"/>
 		        		</TouchableOpacity>
 		        		<TouchableOpacity
-		        			onPress={() => console.log(1)}
+		        			onPress={() => {
+		        				let pathList = this.state.pdfInfo.filter(obj => {
+		        					if (this.state.selectedIds.includes(obj.id)) return true
+		        				})
+
+		        				pathList = pathList.map(obj => "file://"+obj.path)
+
+		        				Share.open({
+					                urls: pathList
+		        				})
+								  .then((res) => {
+								    console.log(res);
+								  })
+								  .catch((err) => {
+								    console.log(err);
+								  });
+		        			}}
 		        			style={{marginRight:20}}
 						>
 		        			<Icon name="md-share-social" size={25} color="black"/>

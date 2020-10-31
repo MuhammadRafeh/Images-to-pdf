@@ -1,47 +1,48 @@
 import React from 'react';
-import { Button, TouchableOpacity, StyleSheet, Text } from 'react-native'
+import {TouchableOpacity, StyleSheet, Text} from 'react-native';
+import {NavigationContainer} from '@react-navigation/native';
+import {createStackNavigator} from '@react-navigation/stack';
+import {Provider} from 'react-redux';
+import propTypes from 'prop-types';
 
-import { NavigationContainer } from '@react-navigation/native';
-import { createStackNavigator } from '@react-navigation/stack';
+import Main from './components/Main'; // 1st Screen
+import Settings from './components/Settings'; // 2nd Screen
+import PdfList from './components/PdfList';
+import store from './Redux/store';
 
-import Main from './components/Main' //1st Screen 
-import Settings from './components/Settings' //2nd Screen
-import PdfList from './components/PdfList'
+const Stack = createStackNavigator();
 
-import { Provider } from 'react-redux'
-import store from './Redux/store'
-
-import propTypes from 'prop-types'
-
-const Stack = createStackNavigator()
-
-const SettingButton = props => (
+const SettingButton = (props) => (
   <TouchableOpacity
     style={styles.settings}
-    onPress={() => {props.navigate("Settings")}}
-  >
+    onPress={() => {
+      props.navigate('Settings');
+    }}>
     <Text style={styles.text}>Settings</Text>
   </TouchableOpacity>
-)
+);
 
 SettingButton.propTypes = {
-  navigate: propTypes.func
-}
+  navigate: propTypes.func,
+};
 
 function MyStackNavigator() {
-  return(
+  return (
     <Stack.Navigator initialRouteName="Main">
-      <Stack.Screen name="Main" component={Main} options={({ navigation }) => ({
-          title: 'Images To PDF', 
+      <Stack.Screen
+        name="Main"
+        component={Main}
+        options={({navigation}) => ({
+          title: 'Images To PDF',
           headerTitleAlign: 'center',
           headerTitleAllowFontScaling: true,
-          headerRight: props => (<SettingButton navigate={navigation.navigate} />)
+          headerRight: () => <SettingButton navigate={navigation.navigate} />,
         })}
       />
-      <Stack.Screen name="Settings" component={Settings}/>
-      <Stack.Screen name="Created PDF's" component={PdfList}/>
+      <Stack.Screen name="Settings" component={Settings} />
+      <Stack.Screen name="Documents" component={PdfList} />
     </Stack.Navigator>
-  )
+  );
 }
 
 function App() {
@@ -54,15 +55,15 @@ function App() {
   );
 }
 
-export default App
+export default App;
 
 const styles = StyleSheet.create({
   settings: {
-    backgroundColor: "#DDDDDD",
+    backgroundColor: '#DDDDDD',
     padding: 8,
-    marginRight: 15
+    marginRight: 15,
   },
   text: {
-    fontWeight: 'bold'
-  }
+    fontWeight: 'bold',
+  },
 });

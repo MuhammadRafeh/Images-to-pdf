@@ -149,7 +149,6 @@ class PdfList extends React.Component {
 	    		headerStyle: {
 		            backgroundColor: '#C0C0C0',
 		        },
-		        headerTintColor: 'black',
 		        headerTitle: 'Actions'
     		})
     		this.isNavigationChanged = true
@@ -159,17 +158,10 @@ class PdfList extends React.Component {
 			//Code to set navigation when nothing is selected
 
 			this.props.navigation.setOptions({
-	    		headerRight: () => (<View />),
-	    		headerStyle: {
-		            backgroundColor: 'white',
-		        },
-		        headerLeft: (props) => (
-		        	<TouchableOpacity {...props}>
-		        		<Icon name='md-arrow-back' size={25} style={{marginLeft: 14}} color={'black'}/>
-		        	</TouchableOpacity>
-		        ),
-		        headerTitle: "Created PDF's",
-		        headerTintColor: 'black'
+	    		headerRight: undefined,
+	    		headerStyle: undefined,
+		        headerLeft: undefined,
+		        headerTitle: undefined,
     		})
     		this.isNavigationChanged = false
 		}

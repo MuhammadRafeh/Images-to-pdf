@@ -1,27 +1,29 @@
 import React from 'react';
 import {View, Text, TouchableOpacity, StyleSheet} from 'react-native';
-import {Button} from 'react-native-elements';
 import propTypes from 'prop-types';
+import Icon from 'react-native-vector-icons/Ionicons';
 
 const Buttons = (props) => {
   const {openGallery, openCamera, handleMakePDFButton, navigateToPDF} = props;
   return (
     <View style={styles.container}>
       <View style={styles.openButtons}>
-        <View style={styles.openGallery}>
-          <Button title="Open Gallery" type="outline" onPress={openGallery} />
-        </View>
-        <View style={styles.openCamera}>
-          <Button title="Open Camera" type="outline" onPress={openCamera} />
-        </View>
+        <TouchableOpacity style={styles.openGallery} onPress={openGallery}>
+          <Icon name='ios-images' size={35} color='blue'/>
+        </TouchableOpacity>
+        <TouchableOpacity style={styles.openCamera} onPress={openCamera}>
+          <Icon name='md-camera-sharp' size={35} color='blue'/>
+        </TouchableOpacity>
         <View style={styles.openPDF}>
-          <Button
+          <TouchableOpacity
             title="Created PDF"
             type="outline"
             onPress={() => {
               navigateToPDF.navigate('Documents');
             }}
-          />
+          >
+            <Icon name='documents' size={35} color='blue'/>
+          </TouchableOpacity>
         </View>
       </View>
       <TouchableOpacity style={styles.makePDF} onPress={handleMakePDFButton}>
@@ -54,13 +56,13 @@ const styles = StyleSheet.create({
     padding: 8,
   },
   openGallery: {
-    paddingRight: 5,
+    paddingRight: 25,
   },
   openCamera: {
-    paddingLeft: 5,
-    paddingRight: 5,
+    paddingLeft: 25,
+    paddingRight: 25,
   },
   openPDF: {
-    paddingLeft: 5,
+    paddingLeft: 25,
   },
 });

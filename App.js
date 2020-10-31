@@ -10,6 +10,8 @@ import Settings from './components/Settings'; // 2nd Screen
 import PdfList from './components/PdfList';
 import store from './Redux/store';
 
+import Icon from 'react-native-vector-icons/Ionicons';
+
 const Stack = createStackNavigator();
 
 const SettingButton = (props) => (
@@ -18,7 +20,7 @@ const SettingButton = (props) => (
     onPress={() => {
       props.navigate('Settings');
     }}>
-    <Text style={styles.text}>Settings</Text>
+    <Icon name='md-settings' size={25} color='blue'/>
   </TouchableOpacity>
 );
 
@@ -59,9 +61,8 @@ export default App;
 
 const styles = StyleSheet.create({
   settings: {
-    backgroundColor: '#DDDDDD',
     padding: 8,
-    marginRight: 15,
+    marginRight: 15
   },
   text: {
     fontWeight: 'bold',

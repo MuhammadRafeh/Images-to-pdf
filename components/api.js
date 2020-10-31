@@ -13,12 +13,10 @@ const myAsyncPDFFunction = async (list, pdfName, pdfQuality) => {
   const namePDF = `${pdfName}.pdf`;
 
   try {
-    // console.log(list)
     const options = {
       imagePaths: list, // Demand List of URI's
       name: namePDF, // Demand Name of pdf
       maxSize: {
-        // optional maximum image dimension - larger images will be resized
         width: 595,
         height: 842,
       },
@@ -26,7 +24,6 @@ const myAsyncPDFFunction = async (list, pdfName, pdfQuality) => {
     };
     const pdf = await RNImageToPdf.createPDFbyImages(options);
 
-    // console.log(pdf.filePath);
     return pdf.filePath;
   } catch (err) {
     // console.log(err);
@@ -42,9 +39,9 @@ const gettingPermission = async () => {
     const granted = await PermissionsAndroid.request(
       PermissionsAndroid.PERMISSIONS.CAMERA,
       {
-        title: 'Cool Photo App Camera Permission',
+        title: 'Images To PDF',
         message:
-          'Cool Photo App needs access to your camera ' +
+          'App needs access to your camera ' +
           'so you can take awesome pictures.',
         buttonNeutral: 'Ask Me Later',
         buttonNegative: 'Cancel',
@@ -61,10 +58,10 @@ const gettingPermission = async () => {
     const granteds = await PermissionsAndroid.request(
       PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE,
       {
-        title: 'Cool Photo App Camera Permission',
+        title: 'Images To PDF',
         message:
-          'Cool Photo App needs access to your camera ' +
-          'so you can take awesome pictures.',
+          'App requires to access your internal your photos ' +
+          'so you can make awesome documents.',
         buttonNeutral: 'Ask Me Later',
         buttonNegative: 'Cancel',
         buttonPositive: 'OK',
@@ -120,15 +117,7 @@ export const openCameraApi = async () => {
     return false;
   } // If bool is false it mean's that permission denied just return from function.
 
-  const options = {
-    title: 'Select Avatar',
-    customButtons: [{name: 'fb', title: 'Choose Photo from Facebook'}],
-    storageOptions: {
-      skipBackup: true,
-      path: 'images',
-    },
-  };
-  await ImagePicker.launchCamera(options, (response) => {
+  await ImagePicker.launchCamera({}, (response) => {
     if (response.didCancel) {
       // console.log('User cancelled image picker');
     } else if (response.error) {

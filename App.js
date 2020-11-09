@@ -12,6 +12,9 @@ import store from './Redux/store';
 
 import Icon from 'react-native-vector-icons/Ionicons';
 
+import { enableScreens } from 'react-native-screens';
+
+// enableScreens(); //Optimization for navigator below.
 const Stack = createStackNavigator();
 
 const SettingButton = (props) => (

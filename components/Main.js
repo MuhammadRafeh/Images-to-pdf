@@ -1,20 +1,17 @@
 import React from 'react';
-import {StyleSheet, View, FlatList} from 'react-native';
-import {MenuProvider} from 'react-native-popup-menu';
-import {Button} from 'react-native-elements';
+import {StyleSheet, View} from 'react-native';
 import {connect} from 'react-redux';
+import DraggableFlatList from 'react-native-draggable-flatlist'
+import FileViewer from 'react-native-file-viewer';
+
+import myAsyncPDFFunction from './api';
 
 import {
   addImages,
-  removeAllImages,
-  movePicDown,
-  movePicUp,
-  deleteImage,
-  addImagesAbove,
-  addImagesBelow,
+  removeAllImages
 } from '../Redux/actions';
 
-import ImageComponent from './ImageComponent';
+import RenderImages from './ImageComponent';
 import DialogComponent from './Dialog';
 import Buttons from './Buttons';
 import {openGalleryApi, openCameraApi} from './api';
@@ -23,19 +20,6 @@ class Main extends React.Component {
   state = {
     showDialog: false,
   };
-
-  componentDidMount() {
-    this.props.navigation.setOptions({
-      headerLeft: () => (
-        <Button
-          title="Clear"
-          buttonStyle={styles.headerSaveButton}
-          type="clear"
-          onPress={this.handleClearImages}
-        />
-      ),
-    });
-  }
 
   openGallery = async () => {
     const listOfUri = await openGalleryApi();
@@ -53,43 +37,31 @@ class Main extends React.Component {
     this.toggleShowDialog(true);
   };
 
-  toggleShowDialog = (bool) => {
+  toggleShowDialog = async (bool, makePdf = false, pdfName) => {
     this.setState({showDialog: bool});
-  };
-
-  handleClearImages = () => {
-    if (this.props.imagePaths.length > 0) {
-      this.props.removeAllImages();
+    if(makePdf === true) {
+          const list = this.props.imagesPath.map(obj => obj.uri)
+        try {
+          const filePath = await myAsyncPDFFunction(
+            list,
+            pdfName,
+            this.props.pdfQuality,
+          );
+          await FileViewer.open(filePath);
+        } catch (e) {
+          // error
+        }
     }
   };
-
-  renderItem = ({item}) => (
-    <ImageComponent
-      imageObj={item}
-      movePicUp={this.props.movePicUp}
-      movePicDown={this.props.movePicDown}
-      deleteImage={this.props.deleteImage}
-      resizeMode={this.props.resizeMode}
-      addImagesAbove={this.props.addImagesAbove}
-      addImagesBelow={this.props.addImagesBelow}
-      imageSize={this.props.imageSize}
-    />
-  );
 
   render() {
     return (
       <View style={styles.container}>
-        <MenuProvider>
-          <FlatList
-            data={this.props.imagePaths}
-            renderItem={this.renderItem}
-            keyExtractor={(item) => item.id.toString()}
-          />
-        </MenuProvider>
+        <RenderImages navigation={this.props.navigation}/>
         {this.state.showDialog && (
           <DialogComponent
             closeDialog={this.toggleShowDialog} // Prop to close Pop Up dialog
-            imagesPath={this.props.imagePaths}
+            length={this.props.imagesPath.length}
           />
         )}
         <Buttons
@@ -104,19 +76,12 @@ class Main extends React.Component {
 }
 
 const mapStateToProps = (state) => ({
-  imagePaths: state.imagesPath,
-  resizeMode: state.settings.resizeMode,
-  imageSize: state.settings.imageSize,
+  imagesPath: state.imagesPath,
+  pdfQuality: state.settings.quality
 });
 
 const mapDispatchToProps = {
-  addImages,
-  removeAllImages,
-  movePicUp,
-  movePicDown,
-  deleteImage,
-  addImagesAbove,
-  addImagesBelow,
+  addImages
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(Main);
@@ -127,8 +92,5 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
     alignItems: 'center',
     justifyContent: 'center',
-  },
-  headerSaveButton: {
-    marginLeft: 10,
-  },
+  }
 });

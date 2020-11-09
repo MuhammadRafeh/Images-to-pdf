@@ -1,17 +1,14 @@
 import React from 'react';
 import {View} from 'react-native';
 import Dialog from 'react-native-dialog';
-import FileViewer from 'react-native-file-viewer';
 import propTypes from 'prop-types';
 import {connect} from 'react-redux';
 
-import myAsyncPDFFunction from './api';
 
 class DialogComponent extends React.Component {
   static propTypes = {
-    imagesPath: propTypes.array,
+    length: propTypes.number,
     closeDialog: propTypes.func,
-    pdfQuality: propTypes.any,
   };
 
   state = {
@@ -27,25 +24,11 @@ class DialogComponent extends React.Component {
   };
 
   handleDone = async () => {
-    this.props.closeDialog(false);
-    const list = [];
-    this.props.imagesPath.forEach((obj) => {
-      list.push(obj.uri);
-    });
-    try {
-      const filePath = await myAsyncPDFFunction(
-        list,
-        this.state.pdfName,
-        this.props.pdfQuality,
-      );
-      await FileViewer.open(filePath);
-    } catch (e) {
-      // error
-    }
+    this.props.closeDialog(false, true, this.state.pdfName);
   };
 
   render() {
-    if (this.props.imagesPath.length > 0) {
+    if (this.props.length > 0) {
       return (
         <View>
           <Dialog.Container visible>
@@ -75,8 +58,4 @@ class DialogComponent extends React.Component {
   }
 }
 
-const mapStateToProps = (state) => ({
-  pdfQuality: state.settings.quality,
-});
-
-export default connect(mapStateToProps)(DialogComponent);
+export default DialogComponent

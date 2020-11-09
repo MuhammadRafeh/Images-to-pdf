@@ -2,14 +2,14 @@ import { combineReducers } from 'redux'
 
 import {
   UPDATE_PDF_QUALITY,
-  ADD_IMAGES, DELETE_IMAGE,
+  ADD_IMAGES,
   MOVE_PIC_UP,
   MOVE_PIC_DOWN,
-  REMOVE_ALL_IMAGES,
   UPDATE_IMAGE_SIZE,
   UPDATE_RESIZE_MODE,
   ADD_IMAGES_ABOVE,
-  ADD_IMAGES_BELOW
+  ADD_IMAGES_BELOW,
+  REMOVE_IMAGES
 } from './actions'
 
 // Reducers for handling New Contacts & Users
@@ -82,18 +82,21 @@ const mergeForAddImage = (state, payload) => {
   return state
 }
 
-const imageReducer = (state = [], action) => {
+handleRemoveImages = (state, payload) => {
+  if (payload.length === state.length || payload===true) return [] //it's mean user has selected all the images
+  return state.filter(obj => !payload.includes(obj.id))
+}
+
+const imageReducer = (state = [], action) => { //[{}, {}, {}, ........]
   switch (action.type) {
     case ADD_IMAGES:
       return mergeForAddImage(state, action.payload)
-    case DELETE_IMAGE:
-      return state.filter((imagepath) => imagepath.id !== action.payload) // action.payload is id
     case MOVE_PIC_UP:
       return movePicToUp(state, action.payload)
     case MOVE_PIC_DOWN:
       return movePicToDown(state, action.payload)
-    case REMOVE_ALL_IMAGES:
-      return []
+    case REMOVE_IMAGES:
+      return handleRemoveImages(state, action.payload)
     case ADD_IMAGES_ABOVE:
       return addImagesAbove(state, action.payload)
     case ADD_IMAGES_BELOW:
@@ -103,7 +106,7 @@ const imageReducer = (state = [], action) => {
   }
 }
 
-const settingReducer = (state = { quality: 0.7, imageSize: 50, resizeMode: 'contain' }, action) => {
+const settingReducer = (state = { quality: 0.7, imageSize: 40, resizeMode: 'contain' }, action) => {
   switch (action.type) {
     case UPDATE_PDF_QUALITY:
       return { ...state, quality: action.payload }

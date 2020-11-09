@@ -1,105 +1,334 @@
 import React from 'react';
-import {Image, Dimensions} from 'react-native';
+import {Image, Dimensions, FlatList, TouchableOpacity, StyleSheet, View, BackHandler, Alert} from 'react-native';
 import propTypes from 'prop-types';
 import FileViewer from 'react-native-file-viewer';
+import {connect} from 'react-redux';
+
+import {Button} from 'react-native-elements';
+
+import Icon from 'react-native-vector-icons/Ionicons';
+
 import {
-  Menu,
-  MenuOptions,
-  MenuOption,
-  MenuTrigger,
-} from 'react-native-popup-menu';
+  addImages,
+  movePicDown,
+  movePicUp,
+  addImagesAbove,
+  addImagesBelow,
+  removeImages
+} from '../Redux/actions';
 
 import {openGalleryApi} from './api';
 
-class ImageComponent extends React.Component {
+class RenderImages extends React.Component {
   static propTypes = {
-    deleteImage: propTypes.func,
     movePicUp: propTypes.func,
     movePicDown: propTypes.func,
-    imageObj: propTypes.object,
     addImagesAbove: propTypes.func,
     addImagesBelow: propTypes.func,
     imageSize: propTypes.number,
     resizeMode: propTypes.string,
   };
 
-  shouldComponentUpdate(nextProps) {
+  shouldComponentUpdate(nextProps, nextState) {
     return (
-      nextProps.imageObj.id !== this.props.imageObj.id ||
-      nextProps.imageSize !== this.props.imageSize ||
-      this.props.resizeMode !== nextProps.resizeMode
+      nextProps.imagePaths !== this.props.imagePaths || 
+      nextState.selectedIds !== this.state.selectedIds ||
+      nextProps.resizeMode !== this.props.resizeMode ||
+      nextProps.imageSize !== this.props.imageSize
     );
   }
 
-  handleDelete = () => {
-    this.props.deleteImage(this.props.imageObj.id);
+  state = {
+    selectedIds: []
+  }
+
+  componentDidMount() {
+    this.isNavigationChanged = false;
+    BackHandler.addEventListener('hardwareBackPress', this.handleBackButtonClick);
+  }
+
+  componentDidUpdate() {
+    this.updateHeader();
+  }
+
+  componentWillUnmount() {
+    BackHandler.removeEventListener('hardwareBackPress', this.handleBackButtonClick);
+  }
+
+  handleBackButtonClick = () => {
+    if (this.state.selectedIds.length===0) {
+      Alert.alert("Hold on!", "Are you sure you want to exit?", [
+      {
+        text: "Cancel",
+        onPress: () => null,
+        style: "cancel"
+      },
+      { text: "YES", onPress: () => {  
+        this.props.removeImages(true);
+        BackHandler.exitApp()} }
+    ]);
+    return true;
+      // return false //Going back
+    } else {
+      this.setState({selectedIds: []})
+      return true //  Preventing hardware back button to go back
+    }
+  }
+
+  updateHeader = () => {
+    if (this.state.selectedIds.length > 0 && !this.isNavigationChanged) {
+      // Code to set Header when something is selected --------------------------------------------
+
+      this.props.navigation.setOptions({
+
+        headerRight: () => (
+          <View style={styles.headerContainerOnSelect}>
+
+            <TouchableOpacity //up arrow key --------------------------------------------------------
+              onPress={this.handleMoveUp}
+              style={styles.headerUpKey}>
+              <Icon name="md-arrow-up" size={25} color="black" />
+            </TouchableOpacity>
+
+            <TouchableOpacity //down arrow key ------------------------------------------------------
+              onPress={() => {
+
+              }}
+              style={styles.headerDownKey}>
+              <Icon name="md-arrow-down" size={25} color="black" />
+            </TouchableOpacity>
+
+            <TouchableOpacity //Delete dustbin ---------------------------------------------------------
+              onPress={() => {
+                  this.props.removeImages(this.state.selectedIds);
+                  this.setState({selectedIds: []})
+              }}
+              style={styles.headerTrashIcon}>
+              <Icon name="md-trash-bin" size={25} color="black" />
+            </TouchableOpacity>
+
+          </View>
+        ),
+        headerLeft: () => (
+          <View style={styles.headerContainerOnSelect}>
+
+            <TouchableOpacity //Cross ------------------------------------------------------------
+              onPress={() => {
+                this.setState({selectedIds: []});
+              }}>
+              <Icon name="md-close" size={25} style={styles.headerCloseIcon} />
+            </TouchableOpacity>
+
+            <TouchableOpacity //Select All ---------------------------------------------------------
+              onPress={() => {
+                const list = this.props.imagePaths.map(obj => obj.id);
+                this.setState({selectedIds: list});
+              }}>
+              <Icon name="md-checkmark-done-sharp" size={25} style={styles.headerSelectAll} />
+            </TouchableOpacity>
+
+          </View>
+        ),
+        headerStyle: {
+          backgroundColor: '#C0C0C0',
+        },
+        headerTitle: '',
+      });
+      this.isNavigationChanged = true;
+      return;
+    }
+
+    if (
+      this.state.selectedIds.length === 0 &&
+      this.isNavigationChanged === true
+    ) {
+      // Code to set navigation when nothing is selected ----------------------------------------------
+
+      this.props.navigation.setOptions({
+        headerRight: () => (
+          <TouchableOpacity
+            style={styles.settings}
+            onPress={() => {
+              this.props.navigation.navigate('Settings');
+            }}>
+            <Icon name='md-settings' size={25} color='blue'/>
+          </TouchableOpacity>),
+        headerStyle: undefined,
+        headerLeft: undefined,
+        headerTitle: undefined,
+      });
+      this.isNavigationChanged = false;
+    }
+  }
+
+  handleMoveUp = id => {
+    this.props.movePicUp(id);
   };
 
-  handleMoveUp = () => {
-    this.props.movePicUp(this.props.imageObj.id);
+  handleMoveDown = id => {
+    this.props.movePicDown(id);
   };
 
-  handleMoveDown = () => {
-    this.props.movePicDown(this.props.imageObj.id);
-  };
-
-  handleViewImage = async () => {
+  handleViewImage = async (id) => {
     try {
-      await FileViewer.open(this.props.imageObj.uri);
+      await FileViewer.open(id);
     } catch (e) {
       // Error
     }
   };
 
-  handleAddImageAbove = async () => {
+  handleAddImageAbove = async (id) => {
     const listOfUri = await openGalleryApi();
     if (!listOfUri) {
       return;
     } // if listOfUri is false then return simply
-    this.props.addImagesAbove({id: this.props.imageObj.id, listOfUri});
+    this.props.addImagesAbove({id, listOfUri});
   };
 
-  handleAddImageBelow = async () => {
+  handleAddImageBelow = async (id) => {
     const listOfUri = await openGalleryApi();
     if (!listOfUri) {
       return;
     } // if listOfUri is false then return simply
-    this.props.addImagesBelow({id: this.props.imageObj.id, listOfUri});
+    this.props.addImagesBelow({id, listOfUri});
   };
 
-  render() {
+  handleOnImagePress = id => {
+    if (this.state.selectedIds.length === 0) return
+
+    if (!this.state.selectedIds.includes(id)) {
+      // if id not exist in list
+      this.setState((prevState) => ({
+        selectedIds: [...prevState.selectedIds, id],
+      }));
+    } else {
+      // In this section below we want to unselect this id
+      const list = [...this.state.selectedIds];
+      list.splice(this.state.selectedIds.indexOf(id), 1);
+      this.setState({selectedIds: list});
+    }
+  }
+
+  handleOnImageLongPress = id => {
+    if (this.state.selectedIds.length === 0) {
+      this.setState((prevState) => ({
+        selectedIds: [...prevState.selectedIds, id]
+      }));
+    }
+  }
+
+  renderItem = ({item}) => {
     const windowWidth = Dimensions.get('window').width;
     const windowHeight =
       (Dimensions.get('window').height * this.props.imageSize) / 100;
 
-    const imageStyle = {
-      width: windowWidth,
-      height: windowHeight,
-      marginBottom: 13,
-    };
+    const imageStyle = this.state.selectedIds.includes(item.id) ? 
+      { 
+        width: windowWidth,
+        height: windowHeight,
+        marginBottom: 13,
+        borderRadius: 100/2,
+        overlayColor: 'black'
+      } : {
+        width: windowWidth,
+        height: windowHeight,
+        marginBottom: 13,
+      } ;
+      console.log(item.uri)
 
+    return(
+      <TouchableOpacity
+        onPress={() => {this.handleOnImagePress(item.id)}}
+        onLongPress={() => {this.handleOnImageLongPress(item.id)}}
+      >
+        <Image
+          style={imageStyle}
+          resizeMode={this.props.resizeMode}
+          source={{
+            uri: item.uri,
+          }}
+        />
+      </TouchableOpacity>
+    )
+  };
+
+  render() {
     return (
-      <Menu>
-        <MenuTrigger>
-          <Image
-            style={imageStyle}
-            resizeMode={this.props.resizeMode}
-            source={{
-              uri: this.props.imageObj.uri,
-            }}
-          />
-        </MenuTrigger>
-        <MenuOptions>
-          <MenuOption text="View" onSelect={this.handleViewImage} />
-          <MenuOption text="Delete" onSelect={this.handleDelete} />
-          <MenuOption text="Move Up" onSelect={this.handleMoveUp} />
-          <MenuOption text="Move Down" onSelect={this.handleMoveDown} />
-          <MenuOption text="Add Above" onSelect={this.handleAddImageAbove} />
-          <MenuOption text="Add Below" onSelect={this.handleAddImageBelow} />
-        </MenuOptions>
-      </Menu>
+      <FlatList
+        data={this.props.imagePaths}
+        renderItem={this.renderItem}
+        keyExtractor={(item) => item.id.toString()}
+        extraData={this.state.selectedIds}
+      />
     );
   }
 }
 
-export default ImageComponent;
+const mapStateToProps = (state) => ({
+  imagePaths: state.imagesPath,
+  resizeMode: state.settings.resizeMode,
+  imageSize: state.settings.imageSize,
+});
+
+const mapDispatchToProps = {
+  addImages,
+  removeImages,
+  movePicUp,
+  movePicDown,
+  addImagesAbove,
+  addImagesBelow,
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(RenderImages);
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: '#fff',
+  },
+  pdfName: {
+    marginLeft: 10,
+    fontWeight: 'bold',
+    paddingTop: 2,
+    fontSize: 15,
+  },
+  belowNameRow: {
+    marginLeft: 10,
+    paddingTop: 2,
+  },
+  headerContainerOnSelect: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  headerSelectAll: {
+    marginLeft: 18,
+  },
+  headerSocialIcon: {
+    marginRight: 20,
+  },
+  headerTrashIcon: {
+    marginRight: 15,
+  },
+  headerCloseIcon: {
+    marginLeft: 12,
+    color: 'black',
+  },
+  documentView: {
+    flexDirection: 'column',
+  },
+  noDataView: {
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  settings: {
+    padding: 8,
+    marginRight: 15
+  },
+  headerDownKey: {
+    marginRight: 15,
+  },
+  headerUpKey: {
+    marginRight: 15,
+  }
+});
+

@@ -1,5 +1,5 @@
 import React from 'react';
-import {View, FlatList, StyleSheet, Text, TouchableOpacity} from 'react-native';
+import {View, FlatList, StyleSheet, Text, TouchableOpacity, Animated, BackHandler} from 'react-native';
 import * as RNFS from 'react-native-fs';
 import Icon from 'react-native-vector-icons/Ionicons';
 import FileViewer from 'react-native-file-viewer';
@@ -12,13 +12,35 @@ class PdfList extends React.Component {
   };
 
   componentDidMount() {
+    this.value = new Animated.Value(0);
     this.id = 0;
     this.fetchDataFromDirectory();
     this.isNavigationChanged = false;
+    Animated.timing(this.value, {
+      toValue: 1,
+      duration: 1500,
+      useNativeDriver: true
+    }).start()
+
+    BackHandler.addEventListener('hardwareBackPress', this.handleBackButtonClick);
+  }
+
+
+  componentWillUnmount() {
+    BackHandler.removeEventListener('hardwareBackPress', this.handleBackButtonClick);
   }
 
   componentDidUpdate() {
     this.updateHeader();
+  }
+
+  handleBackButtonClick = () => {
+    if (this.state.selectedIds.length===0) {
+      return false //Going back
+    } else {
+      this.setState({selectedIds: []})
+      return true //  Preventing hardware back button to go back
+    }
   }
 
   formatBytes = (a, b = 2) => {
@@ -115,7 +137,6 @@ class PdfList extends React.Component {
     });
     this.setState({selectedIds: [], pdfInfo: remaining});
   };
-
   updateHeader = () => {
     if (this.state.selectedIds.length > 0 && !this.isNavigationChanged) {
       // Code to set Header when something is selected
@@ -123,7 +144,7 @@ class PdfList extends React.Component {
       this.props.navigation.setOptions({
         headerRight: () => (
           <View style={styles.headerContainerOnSelect}>
-            <TouchableOpacity
+            <TouchableOpacity //Select All
               onPress={() => {
                 const list = this.state.pdfInfo.map((obj) => obj.id);
                 this.setState({selectedIds: list});
@@ -288,6 +309,18 @@ class PdfList extends React.Component {
           renderItem={this.renderItem}
           keyExtractor={(item) => item.id.toString()}
           extraData={this.state.selectedIds}
+          ListEmptyComponent={<Text></Text>}
+          ItemSeparatorComponent={() => (
+            <Animated.View
+              style={{
+                height: 2,
+                backgroundColor: "#f5f5f5",
+                marginLeft: 10,
+                marginRight: 10,
+                opacity: this.value
+              }}
+            />
+          )}
         />
       </View>
     );
@@ -331,4 +364,9 @@ const styles = StyleSheet.create({
   documentView: {
     flexDirection: 'column',
   },
+  noDataView: {
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+
 });

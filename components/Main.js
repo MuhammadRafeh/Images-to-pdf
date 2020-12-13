@@ -18,6 +18,7 @@ import {openGalleryApi, openCameraApi} from './api';
 class Main extends React.Component {
   state = {
     showDialog: false,
+    isButtonVisible: true
   };
 
   openGallery = async () => {
@@ -53,22 +54,33 @@ class Main extends React.Component {
     }
   };
 
+  toggleIsButtonVisible = bool => {
+    this.setState({isButtonVisible: bool})
+  }
+
   render() {
     return (
       <View style={styles.container}>
-        <RenderImages navigation={this.props.navigation}/>
+        <RenderImages
+          navigation={this.props.navigation}
+          toggleButtonVisible={this.toggleIsButtonVisible}
+          isButtonVisible={this.state.isButtonVisible}
+        />
         {this.state.showDialog && (
           <DialogComponent
             closeDialog={this.toggleShowDialog} // Prop to close Pop Up dialog
             length={this.props.imagesPath.length}
           />
         )}
-        <Buttons
+        {
+          this.state.isButtonVisible &&
+          <Buttons
           handleMakePDFButton={this.handleMakePDFButton}
           openCamera={this.openCamera}
           openGallery={this.openGallery}
           navigateToPDF={this.props.navigation}
-        />
+          />
+        }
       </View>
     );
   }

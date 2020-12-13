@@ -34,6 +34,8 @@ class RenderImages extends React.Component {
     addImagesBelow: propTypes.func,
     imageSize: propTypes.number,
     resizeMode: propTypes.string,
+    toggleButtonVisible: propTypes.func,
+    isButtonVisible: propTypes.bool
   };
 
   shouldComponentUpdate(nextProps, nextState) {
@@ -52,14 +54,24 @@ class RenderImages extends React.Component {
   componentDidMount() {
     this.isNavigationChanged = false;
     BackHandler.addEventListener('hardwareBackPress', this.handleBackButtonClick);
+    console.log('logged')
   }
 
   componentDidUpdate() {
     this.updateHeader();
+    if (this.state.selectedIds.length === 0 && !this.props.isButtonVisible) { //Here we are mounting the button
+      this.props.toggleButtonVisible(true);
+      console.log('visible')
+    }
+    else if (this.state.selectedIds.length != 0 && this.props.isButtonVisible) { //here we are hiding button
+      this.props.toggleButtonVisible(false);
+      console.log('hide')
+    }
   }
 
   componentWillUnmount() {
     BackHandler.removeEventListener('hardwareBackPress', this.handleBackButtonClick);
+    console.log(23)
   }
 
   handleBackButtonClick = () => {
@@ -234,8 +246,9 @@ class RenderImages extends React.Component {
         width: windowWidth,
         height: windowHeight,
         marginBottom: 13,
-        borderRadius: 100/2,
-        overlayColor: 'black'
+        borderRadius: windowWidth/2,
+        overlayColor: 'grey',
+        backgroundColor: 'grey'
       } : {
         width: windowWidth,
         height: windowHeight,
@@ -252,7 +265,7 @@ class RenderImages extends React.Component {
           style={imageStyle}
           resizeMode={this.props.resizeMode}
           source={{
-            uri: item.uri,
+            uri: item.uri
           }}
         />
       </TouchableOpacity>

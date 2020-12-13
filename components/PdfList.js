@@ -333,8 +333,8 @@ class PdfList extends React.Component {
         {
           this.state.pdfInfo.length <= 3 &&
           <View>
-            <Text style={{color: 'black', textAlign: 'center', color: 'grey', marginBottom: 2, fontWeight: 'bold'}}>Press and Hold for more Actions.</Text>
-            <Text style={{color: 'black', textAlign: 'center', marginBottom: 50, color: 'grey', fontWeight: 'bold'}}>Tap for View.</Text>
+            <Text style={{color: 'black', textAlign: 'center', color: 'grey', marginBottom: 1, fontWeight: 'bold'}}>Press and Hold for more Actions</Text>
+            <Text style={{color: 'black', textAlign: 'center', marginBottom: 50, color: 'grey', fontWeight: 'bold'}}>Tap for View</Text>
           </View>
         }
       </View>

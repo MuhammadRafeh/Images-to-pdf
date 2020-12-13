@@ -60,7 +60,7 @@ const gettingPermission = async () => {
       {
         title: 'Images To PDF',
         message:
-          'App requires to access your internal your photos ' +
+          'App requires to write external storage ' +
           'so you can make awesome documents.',
         buttonNeutral: 'Ask Me Later',
         buttonNegative: 'Cancel',
@@ -117,7 +117,7 @@ export const openCameraApi = async () => {
     return false;
   } // If bool is false it mean's that permission denied just return from function.
 
-  await ImagePicker.launchCamera({}, (response) => {
+  await ImagePicker.launchCamera({mediaType: 'photo', saveToPhotos: true}, (response) => {
     if (response.didCancel) {
       // console.log('User cancelled image picker');
     } else if (response.error) {

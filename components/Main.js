@@ -1,7 +1,6 @@
 import React from 'react';
 import {StyleSheet, View} from 'react-native';
 import {connect} from 'react-redux';
-import DraggableFlatList from 'react-native-draggable-flatlist'
 import FileViewer from 'react-native-file-viewer';
 
 import myAsyncPDFFunction from './api';

@@ -1,5 +1,12 @@
 import React from 'react';
-import {Image, Dimensions, FlatList, TouchableOpacity, StyleSheet, View, BackHandler, Alert} from 'react-native';
+import {Image,
+  Dimensions,
+  FlatList,
+  TouchableOpacity,
+  StyleSheet,
+  View,
+  BackHandler,
+  Alert } from 'react-native';
 import propTypes from 'prop-types';
 import FileViewer from 'react-native-file-viewer';
 import {connect} from 'react-redux';
@@ -31,7 +38,7 @@ class RenderImages extends React.Component {
 
   shouldComponentUpdate(nextProps, nextState) {
     return (
-      nextProps.imagePaths !== this.props.imagePaths || 
+      nextProps.imagePaths !== this.props.imagePaths ||
       nextState.selectedIds !== this.state.selectedIds ||
       nextProps.resizeMode !== this.props.resizeMode ||
       nextProps.imageSize !== this.props.imageSize
@@ -63,7 +70,7 @@ class RenderImages extends React.Component {
         onPress: () => null,
         style: "cancel"
       },
-      { text: "YES", onPress: () => {  
+      { text: "YES", onPress: () => {
         this.props.removeImages(true);
         BackHandler.exitApp()} }
     ]);
@@ -222,8 +229,8 @@ class RenderImages extends React.Component {
     const windowHeight =
       (Dimensions.get('window').height * this.props.imageSize) / 100;
 
-    const imageStyle = this.state.selectedIds.includes(item.id) ? 
-      { 
+    const imageStyle = this.state.selectedIds.includes(item.id) ?
+      {
         width: windowWidth,
         height: windowHeight,
         marginBottom: 13,
@@ -331,4 +338,3 @@ const styles = StyleSheet.create({
     marginRight: 15,
   }
 });
-

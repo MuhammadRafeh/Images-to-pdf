@@ -12,24 +12,10 @@ import store from './Redux/store';
 
 import Icon from 'react-native-vector-icons/Ionicons';
 
-import { enableScreens } from 'react-native-screens';
+// import { enableScreens } from 'react-native-screens';
 
 // enableScreens(); //Optimization for navigator below.
 const Stack = createStackNavigator();
-
-const SettingButton = (props) => (
-  <TouchableOpacity
-    style={styles.settings}
-    onPress={() => {
-      props.navigate('Settings');
-    }}>
-    <Icon name='md-settings' size={25} color='blue'/>
-  </TouchableOpacity>
-);
-
-SettingButton.propTypes = {
-  navigate: propTypes.func,
-};
 
 function MyStackNavigator() {
   return (
@@ -41,7 +27,13 @@ function MyStackNavigator() {
           title: 'Images To PDF',
           headerTitleAlign: 'center',
           headerTitleAllowFontScaling: true,
-          headerRight: () => <SettingButton navigate={navigation.navigate} />,
+          headerRight: () => <TouchableOpacity //------------------------------------ Setting Button
+              style={styles.settings}
+              onPress={() => {
+                navigation.navigate('Settings');
+              }}>
+              <Icon name='md-settings' size={25} color='blue'/>
+            </TouchableOpacity>
         })}
       />
       <Stack.Screen name="Settings" component={Settings} />
@@ -66,8 +58,5 @@ const styles = StyleSheet.create({
   settings: {
     padding: 8,
     marginRight: 15
-  },
-  text: {
-    fontWeight: 'bold',
-  },
+  }
 });

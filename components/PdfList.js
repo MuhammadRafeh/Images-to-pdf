@@ -302,6 +302,14 @@ class PdfList extends React.Component {
   };
 
   render() {
+    if (this.state.pdfInfo.length === 0) {
+      return (
+        <View style={styles.emptyScreenView}>
+          <Icon name="document" size={40} color="grey" />
+          <Text style={styles.nothingDocsCreatedYet}>Nothing Docs Created Yet.</Text>
+        </View>
+      )
+    }
     return (
       <View style={styles.container}>
         <FlatList
@@ -322,6 +330,13 @@ class PdfList extends React.Component {
             />
           )}
         />
+        {
+          this.state.pdfInfo.length <= 3 &&
+          <View>
+            <Text style={{color: 'black', textAlign: 'center', color: 'grey', marginBottom: 2, fontWeight: 'bold'}}>Press and Hold for more Actions.</Text>
+            <Text style={{color: 'black', textAlign: 'center', marginBottom: 50, color: 'grey', fontWeight: 'bold'}}>Tap for View.</Text>
+          </View>
+        }
       </View>
     );
   }
@@ -332,7 +347,7 @@ export default PdfList;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
+    backgroundColor: '#fff'
   },
   pdfName: {
     marginLeft: 10,
@@ -368,5 +383,17 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
-
+  nothingDocsCreatedYet: {
+    textAlign: 'center',
+    fontSize: 20,
+    fontWeight: 'bold',
+    color: 'grey',
+    marginTop: 5
+  },
+  emptyScreenView: {
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#f5f5f5',
+    flex: 1
+  }
 });

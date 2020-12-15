@@ -11,6 +11,8 @@ import propTypes from 'prop-types';
 import FileViewer from 'react-native-file-viewer';
 import {connect} from 'react-redux';
 
+import { useFocusEffect } from '@react-navigation/native';
+
 import {Button} from 'react-native-elements';
 
 import Icon from 'react-native-vector-icons/Ionicons';
@@ -35,7 +37,8 @@ class RenderImages extends React.Component {
     imageSize: propTypes.number,
     resizeMode: propTypes.string,
     toggleButtonVisible: propTypes.func,
-    isButtonVisible: propTypes.bool
+    isButtonVisible: propTypes.bool,
+    navigation: propTypes.any
   };
 
   shouldComponentUpdate(nextProps, nextState) {
@@ -53,8 +56,16 @@ class RenderImages extends React.Component {
 
   componentDidMount() {
     this.isNavigationChanged = false;
-    BackHandler.addEventListener('hardwareBackPress', this.handleBackButtonClick);
-    console.log('logged')
+    // BackHandler.addEventListener('hardwareBackPress', this.handleBackButtonClick);
+    this.focusListener = this.props.navigation.addListener('focus', () => {
+      console.log('focus')
+      BackHandler.addEventListener('hardwareBackPress', this.handleBackButtonClick);
+    });
+
+    this.blurListener = this.props.navigation.addListener('blur', () => {
+      BackHandler.removeEventListener('hardwareBackPress', this.handleBackButtonClick);
+      console.log('Blur')
+    });
   }
 
   componentDidUpdate() {
@@ -71,7 +82,8 @@ class RenderImages extends React.Component {
 
   componentWillUnmount() {
     BackHandler.removeEventListener('hardwareBackPress', this.handleBackButtonClick);
-    console.log(23)
+    this.focusListener();
+    this.blurListener();
   }
 
   handleBackButtonClick = () => {
@@ -165,7 +177,7 @@ class RenderImages extends React.Component {
 
       this.props.navigation.setOptions({
         headerRight: () => (
-          <TouchableOpacity
+          <TouchableOpacity // Setting ----------------------------------------------------------------
             style={styles.settings}
             onPress={() => {
               this.props.navigation.navigate('Settings');
@@ -188,9 +200,9 @@ class RenderImages extends React.Component {
     this.props.movePicDown(id);
   };
 
-  handleViewImage = async (id) => {
+  handleViewImage = async (uri) => {
     try {
-      await FileViewer.open(id);
+      await FileViewer.open(uri);
     } catch (e) {
       // Error
     }
@@ -212,8 +224,11 @@ class RenderImages extends React.Component {
     this.props.addImagesBelow({id, listOfUri});
   };
 
-  handleOnImagePress = id => {
-    if (this.state.selectedIds.length === 0) return
+  handleOnImagePress = async (id, uri) => {
+    if (this.state.selectedIds.length === 0) {
+      await this.handleViewImage(uri);
+      return
+    }
 
     if (!this.state.selectedIds.includes(id)) {
       // if id not exist in list
@@ -258,7 +273,7 @@ class RenderImages extends React.Component {
 
     return(
       <TouchableOpacity
-        onPress={() => {this.handleOnImagePress(item.id)}}
+        onPress={() => {this.handleOnImagePress(item.id, item.uri)}}
         onLongPress={() => {this.handleOnImageLongPress(item.id)}}
       >
         <Image
@@ -273,6 +288,7 @@ class RenderImages extends React.Component {
   };
 
   render() {
+
     return (
       <FlatList
         data={this.props.imagePaths}

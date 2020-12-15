@@ -4,7 +4,6 @@ import Dialog from 'react-native-dialog';
 import propTypes from 'prop-types';
 import {connect} from 'react-redux';
 
-
 class DialogComponent extends React.Component {
   static propTypes = {
     length: propTypes.number,

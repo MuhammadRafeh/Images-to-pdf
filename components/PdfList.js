@@ -302,6 +302,7 @@ class PdfList extends React.Component {
   };
 
   render() {
+    const guidence = {marginBottom: 50}
     if (this.state.pdfInfo.length === 0) {
       return (
         <View style={styles.emptyScreenView}>
@@ -332,9 +333,9 @@ class PdfList extends React.Component {
         />
         {
           this.state.pdfInfo.length <= 3 &&
-          <View>
-            <Text style={{color: 'black', textAlign: 'center', color: 'grey', marginBottom: 1, fontWeight: 'bold'}}>Press and Hold for more Actions</Text>
-            <Text style={{color: 'black', textAlign: 'center', marginBottom: 50, color: 'grey', fontWeight: 'bold'}}>Tap for View</Text>
+          <View style={guidence}>
+            <Text style={styles.pdfGuidence}>Press and Hold for more Actions</Text>
+            <Text style={styles.pdfGuidence}>Tap for View</Text>
           </View>
         }
       </View>
@@ -347,7 +348,7 @@ export default PdfList;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff'
+    backgroundColor: '#fff',
   },
   pdfName: {
     marginLeft: 10,
@@ -395,5 +396,12 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     backgroundColor: '#f5f5f5',
     flex: 1
+  },
+  pdfGuidence: {
+    color: 'black',
+    textAlign: 'center',
+    color: 'grey',
+    fontWeight: 'bold',
+    opacity: 0.7
   }
 });

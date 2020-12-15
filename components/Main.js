@@ -1,5 +1,5 @@
 import React from 'react';
-import {StyleSheet, View} from 'react-native';
+import {StyleSheet, View, Text} from 'react-native';
 import {connect} from 'react-redux';
 import FileViewer from 'react-native-file-viewer';
 
@@ -65,6 +65,7 @@ class Main extends React.Component {
           navigation={this.props.navigation}
           toggleButtonVisible={this.toggleIsButtonVisible}
           isButtonVisible={this.state.isButtonVisible}
+          navigation={this.props.navigation}
         />
         {this.state.showDialog && (
           <DialogComponent
@@ -72,6 +73,10 @@ class Main extends React.Component {
             length={this.props.imagesPath.length}
           />
         )}
+        {
+          this.props.imagesPath.length === 0 &&
+          <Text style={styles.guide}>Press and Hold Images for Manipulation</Text>
+        }
         {
           this.state.isButtonVisible &&
           <Buttons
@@ -103,5 +108,11 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
     alignItems: 'center',
     justifyContent: 'center',
+  },
+  guide: {
+    marginBottom: 60,
+    fontWeight: 'bold',
+    color: 'grey',
+    opacity: 0.7
   }
 });

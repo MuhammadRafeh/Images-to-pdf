@@ -65,7 +65,6 @@ class Main extends React.Component {
           navigation={this.props.navigation}
           toggleButtonVisible={this.toggleIsButtonVisible}
           isButtonVisible={this.state.isButtonVisible}
-          navigation={this.props.navigation}
         />
         {this.state.showDialog && (
           <DialogComponent

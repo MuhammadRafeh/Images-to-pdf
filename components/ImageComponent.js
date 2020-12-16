@@ -6,12 +6,20 @@ import {Image,
   StyleSheet,
   View,
   BackHandler,
-  Alert } from 'react-native';
+  Alert,
+Text } from 'react-native';
 import propTypes from 'prop-types';
 import FileViewer from 'react-native-file-viewer';
 import {connect} from 'react-redux';
 
 import { useFocusEffect } from '@react-navigation/native';
+
+import {
+  Menu,
+  MenuOptions,
+  MenuOption,
+  MenuTrigger,
+} from 'react-native-popup-menu';
 
 import {Button} from 'react-native-elements';
 
@@ -109,28 +117,23 @@ class RenderImages extends React.Component {
 
   updateHeader = () => { // ------------------------------------------------------UPDATE HEADER
     if (this.state.selectedIds.length === 1 && !this.isNavigationChanged) {
-      // Code to set Header when something is selected --------------------------------------------
+      // Code to set Header when just 1 item is selected --------------------------------------------
 
       this.props.navigation.setOptions({
 
         headerRight: () => (
           <View style={styles.headerContainerOnSelect}>
 
-            <TouchableOpacity //Camera Icon --------------------------------------------------------
-              onPress={this.handleMoveUp}
-              style={styles.headerUpKey}>
-              <Icon name="md-camera-sharp" size={25} color="black" />
-            </TouchableOpacity>
 
             <TouchableOpacity //up arrow key --------------------------------------------------------
               onPress={this.handleMoveUp}
-              style={styles.headerUpKey}>
+              style={styles.headerRightStyle}>
               <Icon name="md-arrow-up" size={25} color="black" />
             </TouchableOpacity>
 
             <TouchableOpacity //down arrow key ------------------------------------------------------
               onPress={this.handleMoveDown}
-              style={styles.headerDownKey}>
+              style={styles.headerRightStyle}>
               <Icon name="md-arrow-down" size={25} color="black" />
             </TouchableOpacity>
 
@@ -139,9 +142,30 @@ class RenderImages extends React.Component {
                   this.props.removeImages(this.state.selectedIds);
                   this.setState({selectedIds: []})
               }}
-              style={styles.headerTrashIcon}>
+              style={styles.headerRightStyle}>
               <Icon name="md-trash-bin" size={25} color="black" />
             </TouchableOpacity>
+
+            <View style={styles.headerRightStyle}>
+              <Menu>
+                <MenuTrigger>
+                  <Icon name="ellipsis-vertical" size={25} color="black" />
+                </MenuTrigger>
+                <MenuOptions>
+                  <View style={{backgroundColor: 'grey', padding: 8}}>
+                    <MenuOption onSelect={this.handleAddImageAbove}>
+                      <Text style={{color: 'white', fontSize: 18}}>Add Images Above</Text>
+                    </MenuOption>
+                  </View>
+                  <View style={{height: 1, backgroundColor: 'grey'}}/>
+                  <View style={{backgroundColor: 'grey', padding: 8}}>
+                    <MenuOption onSelect={this.handleAddImageBelow}>
+                      <Text style={{color: 'white', fontSize: 18}}>Add Images Below</Text>
+                    </MenuOption>
+                  </View>
+                </MenuOptions>
+              </Menu>
+            </View>
 
           </View>
         ),
@@ -177,6 +201,7 @@ class RenderImages extends React.Component {
     }
 
     if (this.state.selectedIds.length > 1 && this.isNavigationChanged) {
+      //Code to set header when more then 1 item is selected -------------------------------------------------------
       this.props.navigation.setOptions({
 
         headerRight: () => (
@@ -187,7 +212,7 @@ class RenderImages extends React.Component {
                   this.props.removeImages(this.state.selectedIds);
                   this.setState({selectedIds: []})
               }}
-              style={styles.headerTrashIcon}>
+              style={styles.headerRightStyle}>
               <Icon name="md-trash-bin" size={25} color="black" />
             </TouchableOpacity>
 
@@ -240,20 +265,20 @@ class RenderImages extends React.Component {
     }
   };
 
-  handleAddImageAbove = async (id) => {
+  handleAddImageAbove = async () => {
     const listOfUri = await openGalleryApi();
     if (!listOfUri) {
       return;
     } // if listOfUri is false then return simply
-    this.props.addImagesAbove({id, listOfUri});
+    this.props.addImagesAbove({id: this.state.selectedIds[0], listOfUri});
   };
 
-  handleAddImageBelow = async (id) => {
+  handleAddImageBelow = async () => {
     const listOfUri = await openGalleryApi();
     if (!listOfUri) {
       return;
     } // if listOfUri is false then return simply
-    this.props.addImagesBelow({id, listOfUri});
+    this.props.addImagesBelow({id: this.state.selectedIds[0], listOfUri});
   };
 
   handleOnImagePress = async (id, uri) => {
@@ -350,20 +375,6 @@ const mapDispatchToProps = {
 export default connect(mapStateToProps, mapDispatchToProps)(RenderImages);
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-  },
-  pdfName: {
-    marginLeft: 10,
-    fontWeight: 'bold',
-    paddingTop: 2,
-    fontSize: 15,
-  },
-  belowNameRow: {
-    marginLeft: 10,
-    paddingTop: 2,
-  },
   headerContainerOnSelect: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -371,31 +382,15 @@ const styles = StyleSheet.create({
   headerSelectAll: {
     marginLeft: 18,
   },
-  headerSocialIcon: {
-    marginRight: 20,
-  },
-  headerTrashIcon: {
+  headerRightStyle: {
     marginRight: 15,
   },
   headerCloseIcon: {
     marginLeft: 12,
     color: 'black',
   },
-  documentView: {
-    flexDirection: 'column',
-  },
-  noDataView: {
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
   settings: {
     padding: 8,
     marginRight: 15
-  },
-  headerDownKey: {
-    marginRight: 15,
-  },
-  headerUpKey: {
-    marginRight: 15,
   }
 });

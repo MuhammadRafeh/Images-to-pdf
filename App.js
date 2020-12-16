@@ -10,6 +10,8 @@ import Settings from './components/Settings'; // 2nd Screen
 import PdfList from './components/PdfList';
 import store from './Redux/store';
 
+import { MenuProvider } from 'react-native-popup-menu';
+
 import Icon from 'react-native-vector-icons/Ionicons';
 
 // import { enableScreens } from 'react-native-screens';
@@ -44,11 +46,13 @@ function MyStackNavigator() {
 
 function App() {
   return (
-    <NavigationContainer>
-      <Provider store={store}>
-        <MyStackNavigator />
-      </Provider>
-    </NavigationContainer>
+    <MenuProvider>
+      <NavigationContainer>
+        <Provider store={store}>
+          <MyStackNavigator />
+        </Provider>
+      </NavigationContainer>
+    </MenuProvider>
   );
 }
 

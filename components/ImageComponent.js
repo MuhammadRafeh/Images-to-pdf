@@ -56,6 +56,7 @@ class RenderImages extends React.Component {
 
   componentDidMount() {
     this.isNavigationChanged = false;
+    this.resetHeader = true;
     // BackHandler.addEventListener('hardwareBackPress', this.handleBackButtonClick);
     this.focusListener = this.props.navigation.addListener('focus', () => {
       console.log('focus')
@@ -106,14 +107,20 @@ class RenderImages extends React.Component {
     }
   }
 
-  updateHeader = () => {
-    if (this.state.selectedIds.length > 0 && !this.isNavigationChanged) {
+  updateHeader = () => { // ------------------------------------------------------UPDATE HEADER
+    if (this.state.selectedIds.length === 1 && !this.isNavigationChanged) {
       // Code to set Header when something is selected --------------------------------------------
 
       this.props.navigation.setOptions({
 
         headerRight: () => (
           <View style={styles.headerContainerOnSelect}>
+
+            <TouchableOpacity //Camera Icon --------------------------------------------------------
+              onPress={this.handleMoveUp}
+              style={styles.headerUpKey}>
+              <Icon name="md-camera-sharp" size={25} color="black" />
+            </TouchableOpacity>
 
             <TouchableOpacity //up arrow key --------------------------------------------------------
               onPress={this.handleMoveUp}
@@ -122,9 +129,7 @@ class RenderImages extends React.Component {
             </TouchableOpacity>
 
             <TouchableOpacity //down arrow key ------------------------------------------------------
-              onPress={() => {
-
-              }}
+              onPress={this.handleMoveDown}
               style={styles.headerDownKey}>
               <Icon name="md-arrow-down" size={25} color="black" />
             </TouchableOpacity>
@@ -166,12 +171,37 @@ class RenderImages extends React.Component {
         headerTitle: '',
       });
       this.isNavigationChanged = true;
+      this.resetHeader = false
+      console.log('top')
+      return;
+    }
+
+    if (this.state.selectedIds.length > 1 && this.isNavigationChanged) {
+      this.props.navigation.setOptions({
+
+        headerRight: () => (
+          <View style={styles.headerContainerOnSelect}>
+
+            <TouchableOpacity //Delete dustbin ---------------------------------------------------------
+              onPress={() => {
+                  this.props.removeImages(this.state.selectedIds);
+                  this.setState({selectedIds: []})
+              }}
+              style={styles.headerTrashIcon}>
+              <Icon name="md-trash-bin" size={25} color="black" />
+            </TouchableOpacity>
+
+          </View>
+        )
+      });
+      this.isNavigationChanged = false;
+      console.log('medium')
       return;
     }
 
     if (
       this.state.selectedIds.length === 0 &&
-      this.isNavigationChanged === true
+      !this.resetHeader
     ) {
       // Code to set navigation when nothing is selected ----------------------------------------------
 
@@ -188,16 +218,18 @@ class RenderImages extends React.Component {
         headerLeft: undefined,
         headerTitle: undefined,
       });
+      this.resetHeader = true;
       this.isNavigationChanged = false;
+      console.log('last')
     }
   }
 
-  handleMoveUp = id => {
-    this.props.movePicUp(id);
+  handleMoveUp = () => {
+    this.props.movePicUp(this.state.selectedIds[0]);
   };
 
-  handleMoveDown = id => {
-    this.props.movePicDown(id);
+  handleMoveDown = () => {
+    this.props.movePicDown(this.state.selectedIds[0]);
   };
 
   handleViewImage = async (uri) => {

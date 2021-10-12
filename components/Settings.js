@@ -1,9 +1,9 @@
 import React from 'react';
-import {View, StyleSheet} from 'react-native';
-import {Divider, Slider, Text, Button} from 'react-native-elements';
+import { View, StyleSheet } from 'react-native';
+import { Divider, Slider, Text, Button } from 'react-native-elements';
 import RadioForm from 'react-native-simple-radio-button';
 import propTypes from 'prop-types';
-import {connect} from 'react-redux';
+import { connect } from 'react-redux';
 
 import {
   updateQuality,
@@ -57,24 +57,24 @@ class Settings extends React.PureComponent {
 
   handleOnPDFQualityChange = (value) => {
     if (value.toString().length === 3) {
-      this.setState({pdfQuality: value});
+      this.setState({ pdfQuality: value });
     } else {
-      this.setState({pdfQuality: parseFloat(value.toString().slice(0, 3))});
+      this.setState({ pdfQuality: parseFloat(value.toString().slice(0, 3)) });
     }
   };
 
   handleImageSizeChange = (value) => {
-    this.setState({imageSize: value});
+    this.setState({ imageSize: value });
   };
 
   handleRadioButtonPress = (val) => {
-    this.setState({resizeMode: val});
+    this.setState({ resizeMode: val });
   };
 
   render() {
     const radio_props = [
-      {label: 'Full (Slow)              ', value: 'contain'},
-      {label: 'Short (Fast)', value: 'cover'},
+      { label: 'Full (Slow)              ', value: 'contain' },
+      { label: 'Short (Fast)', value: 'cover' },
     ];
     let initial = 0;
     if (this.state.resizeMode === 'cover') {
@@ -117,9 +117,11 @@ class Settings extends React.PureComponent {
         </View>
         <Divider style={styles.divider} />
         <Text h4>PDF Storage Location</Text>
-        <Text style={styles.pdfStorageText}>
-          Interal Storage: Android/data/com.ImagesToPDF/files/
-        </Text>
+        <View style={{width: '90%'}}>
+          <Text style={styles.pdfStorageText} numberOfLines={1} adjustsFontSizeToFit={true}>
+            Internal Storage: Android/data/com.ImagesToPDF/files/
+          </Text>
+        </View>
         <Divider style={styles.divider} />
       </View>
     );

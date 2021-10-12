@@ -46,11 +46,13 @@ class Settings extends React.PureComponent {
   headerRightButton = () => {
     this.props.navigation.setOptions({
       headerRight: () => (
-        <Button
-          type="clear"
-          onPress={this.handleHeaderButtonPressed}
-          title="Save"
-        />
+        <View style={{marginRight: 10}}>
+          <Button
+            type="clear"
+            onPress={this.handleHeaderButtonPressed}
+            title="Save"
+          />
+        </View>
       ),
     });
   };

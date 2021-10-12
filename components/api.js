@@ -1,4 +1,3 @@
-// import { Dimensions } from 'react-native';
 import RNImageToPdf from 'react-native-image-to-pdf';
 import {PermissionsAndroid} from 'react-native';
 import ImagePicker from 'react-native-image-picker';
@@ -115,8 +114,8 @@ export const openCameraApi = async () => {
   const bool = await gettingPermission();
   if (!bool) {
     return false;
-  } // If bool is false it mean's that permission denied just return from function.
-
+  }
+  
   await ImagePicker.launchCamera({}, (response) => {
     if (response.didCancel) {
       // console.log('User cancelled image picker');

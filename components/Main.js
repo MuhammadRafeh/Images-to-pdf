@@ -1,6 +1,6 @@
 import React from 'react';
-import {StyleSheet, View, Text} from 'react-native';
-import {connect} from 'react-redux';
+import { StyleSheet, View, Text } from 'react-native';
+import { connect } from 'react-redux';
 import FileViewer from 'react-native-file-viewer';
 
 import myAsyncPDFFunction from './api';
@@ -13,7 +13,7 @@ import {
 import RenderImages from './ImageComponent';
 import DialogComponent from './Dialog';
 import Buttons from './Buttons';
-import {openGalleryApi, openCameraApi} from './api';
+import { openGalleryApi, openCameraApi } from './api';
 
 class Main extends React.Component {
   state = {
@@ -38,24 +38,24 @@ class Main extends React.Component {
   };
 
   toggleShowDialog = async (bool, makePdf = false, pdfName) => {
-    this.setState({showDialog: bool});
-    if(makePdf === true) {
-          const list = this.props.imagesPath.map(obj => obj.uri)
-        try {
-          const filePath = await myAsyncPDFFunction(
-            list,
-            pdfName,
-            this.props.pdfQuality,
-          );
-          await FileViewer.open(filePath);
-        } catch (e) {
-          // error
-        }
+    this.setState({ showDialog: bool });
+    if (makePdf === true) {
+      const list = this.props.imagesPath.map(obj => obj.uri)
+      try {
+        const filePath = await myAsyncPDFFunction(
+          list,
+          pdfName,
+          this.props.pdfQuality,
+        );
+        await FileViewer.open(filePath);
+      } catch (e) {
+        // error
+      }
     }
   };
 
   toggleIsButtonVisible = bool => {
-    this.setState({isButtonVisible: bool})
+    this.setState({ isButtonVisible: bool })
   }
 
   render() {
@@ -79,10 +79,10 @@ class Main extends React.Component {
         {
           this.state.isButtonVisible &&
           <Buttons
-          handleMakePDFButton={this.handleMakePDFButton}
-          openCamera={this.openCamera}
-          openGallery={this.openGallery}
-          navigateToPDF={this.props.navigation}
+            handleMakePDFButton={this.handleMakePDFButton}
+            openCamera={this.openCamera}
+            openGallery={this.openGallery}
+            navigateToPDF={this.props.navigation}
           />
         }
       </View>

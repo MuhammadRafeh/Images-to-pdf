@@ -1,8 +1,7 @@
 import React from 'react';
-import {View} from 'react-native';
+import { View } from 'react-native';
 import Dialog from 'react-native-dialog';
 import propTypes from 'prop-types';
-import {connect} from 'react-redux';
 
 class DialogComponent extends React.Component {
   static propTypes = {
@@ -15,7 +14,7 @@ class DialogComponent extends React.Component {
   };
 
   handlePDFNameInput = (pdfName) => {
-    this.setState({pdfName});
+    this.setState({ pdfName });
   };
 
   handleCancel = () => {

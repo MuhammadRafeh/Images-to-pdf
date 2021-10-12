@@ -27,7 +27,7 @@ const Buttons = (props) => {
         </View>
       </View>
       <TouchableOpacity style={styles.makePDF} onPress={handleMakePDFButton}>
-        <Text>Make PDF</Text>
+        <Text style={{color: 'white'}}>Make PDF</Text>
       </TouchableOpacity>
     </View>
   );
@@ -52,8 +52,9 @@ const styles = StyleSheet.create({
   },
   makePDF: {
     marginBottom: 8,
-    backgroundColor: '#DDDDDD',
+    backgroundColor: 'black',
     padding: 8,
+    borderRadius: 8
   },
   openGallery: {
     paddingRight: 25,

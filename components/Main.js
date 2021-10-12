@@ -74,7 +74,7 @@ class Main extends React.Component {
         )}
         {
           this.props.imagesPath.length === 0 &&
-          <Text style={styles.guide}>Press and Hold Images for Manipulation</Text>
+          <Text style={styles.guide} numberOfLines={1} adjustsFontSizeToFit={true}>Press and Hold Images for Manipulation</Text>
         }
         {
           this.state.isButtonVisible &&

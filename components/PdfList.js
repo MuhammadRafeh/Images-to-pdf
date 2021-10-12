@@ -1,5 +1,5 @@
 import React from 'react';
-import {View, FlatList, StyleSheet, Text, TouchableOpacity, Animated, BackHandler} from 'react-native';
+import { View, FlatList, StyleSheet, Text, TouchableOpacity, Animated, BackHandler } from 'react-native';
 import * as RNFS from 'react-native-fs';
 import Icon from 'react-native-vector-icons/Ionicons';
 import FileViewer from 'react-native-file-viewer';
@@ -35,10 +35,10 @@ class PdfList extends React.Component {
   }
 
   handleBackButtonClick = () => {
-    if (this.state.selectedIds.length===0) {
+    if (this.state.selectedIds.length === 0) {
       return false //Going back
     } else {
-      this.setState({selectedIds: []})
+      this.setState({ selectedIds: [] })
       return true //  Preventing hardware back button to go back
     }
   }
@@ -49,9 +49,8 @@ class PdfList extends React.Component {
     }
     const c = b < 0 ? 0 : b;
     const d = Math.floor(Math.log(a) / Math.log(1024));
-    return `${parseFloat((a / Math.pow(1024, d)).toFixed(c))} ${
-      ['Bytes', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB'][d]
-    }`;
+    return `${parseFloat((a / Math.pow(1024, d)).toFixed(c))} ${['Bytes', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB'][d]
+      }`;
   };
 
   fetchDataFromDirectory = async () => {
@@ -80,7 +79,7 @@ class PdfList extends React.Component {
         return date2 - date1;
       });
 
-      this.setState({pdfInfo: [...latest]});
+      this.setState({ pdfInfo: [...latest] });
     } catch (err) {
       // console.log(err.message, err.code);
     }
@@ -105,7 +104,7 @@ class PdfList extends React.Component {
       // In this section below we want to unselect this id
       const list = [...this.state.selectedIds];
       list.splice(this.state.selectedIds.indexOf(id), 1);
-      this.setState({selectedIds: list});
+      this.setState({ selectedIds: list });
     }
   };
 
@@ -135,7 +134,7 @@ class PdfList extends React.Component {
           // console.log(err.message);
         });
     });
-    this.setState({selectedIds: [], pdfInfo: remaining});
+    this.setState({ selectedIds: [], pdfInfo: remaining });
   };
   updateHeader = () => {
     if (this.state.selectedIds.length > 0 && !this.isNavigationChanged) {
@@ -147,7 +146,7 @@ class PdfList extends React.Component {
             <TouchableOpacity //Select All
               onPress={() => {
                 const list = this.state.pdfInfo.map((obj) => obj.id);
-                this.setState({selectedIds: list});
+                this.setState({ selectedIds: list });
               }}
               style={styles.headerSelectAll}>
               <Icon name="md-checkmark-done-sharp" size={25} color="black" />
@@ -185,7 +184,7 @@ class PdfList extends React.Component {
         headerLeft: () => (
           <TouchableOpacity
             onPress={() => {
-              this.setState({selectedIds: []});
+              this.setState({ selectedIds: [] });
             }}>
             <Icon name="md-close" size={25} style={styles.headerCloseIcon} />
           </TouchableOpacity>
@@ -214,7 +213,7 @@ class PdfList extends React.Component {
     }
   };
 
-  renderItem = ({item}) => {
+  renderItem = ({ item }) => {
     // item will be a object
     let show = ''; // min: hours: date: just now: yesterday
     const curTime = new Date();
@@ -244,26 +243,28 @@ class PdfList extends React.Component {
     } else {
       show =
         curYear === docYear &&
-        curMonth === docMonth &&
-        curTime.getUTCDate() === item.time.getUTCDate() + 1
+          curMonth === docMonth &&
+          curTime.getUTCDate() === item.time.getUTCDate() + 1
           ? 'yesterday'
           : 'date';
     }
 
     const defineStyle = this.state.selectedIds.includes(item.id)
       ? {
-          flexDirection: 'row',
-          paddingBottom: 8,
-          paddingTop: 8,
-          backgroundColor: '#C0C0C0',
-          paddingLeft: 15,
-        }
+        flexDirection: 'row',
+        paddingBottom: 8,
+        paddingTop: 8,
+        backgroundColor: '#C0C0C0',
+        paddingLeft: 15,
+        alignItems: 'center'
+      }
       : {
-          flexDirection: 'row',
-          paddingBottom: 8,
-          paddingTop: 8,
-          paddingLeft: 15,
-        };
+        flexDirection: 'row',
+        paddingBottom: 8,
+        paddingTop: 8,
+        alignItems: 'center',
+        paddingLeft: 15,
+      };
 
     return (
       <TouchableOpacity
@@ -274,35 +275,33 @@ class PdfList extends React.Component {
         }}>
         <Icon name="document" size={40} color="grey" />
         <View style={styles.documentView}>
-          <Text style={styles.pdfName}>{item.name}</Text>
-          {show === 'min' && (
-            <Text style={styles.belowNameRow}>
-              {minutes} minutes ago - {item.size}
-            </Text>
-          )}
-          {show === 'just now' && (
-            <Text style={styles.belowNameRow}>Just now - {item.size}</Text>
-          )}
-          {show === 'hours' && (
-            <Text style={styles.belowNameRow}>
-              {hours} hours ago - {item.size}
-            </Text>
-          )}
-          {show === 'yesterday' && (
-            <Text style={styles.belowNameRow}>Yesterday - {item.size}</Text>
-          )}
-          {show === 'date' && (
-            <Text style={styles.belowNameRow}>
-              {item.time.getUTCDate()}/{docMonth + 1}/{docYear} - {item.size}
-            </Text>
-          )}
+          <View style={{ width: '90%' }}>
+            <Text style={styles.pdfName} numberOfLines={2} adjustsFontSizeToFit={true}>{item.name}</Text>
+          </View>
+          <Text style={styles.belowNameRow}>
+            {show === 'min' && (
+              `${minutes} minutes ago - ${item.size}`
+            )}
+            {show === 'just now' && (
+              `Just now - ${item.size}`
+            )}
+            {show === 'hours' && (
+              `${hours} hours ago - ${item.size}`
+            )}
+            {show === 'yesterday' && (
+              `Yesterday - ${item.size}`
+            )}
+            {show === 'date' && (
+              `${item.time.getUTCDate()} / ${docMonth + 1}/${docYear} - ${item.size}`
+            )}
+          </Text>
         </View>
       </TouchableOpacity>
     );
   };
 
   render() {
-    const guidence = {marginBottom: 50}
+    const guidence = { marginBottom: 50 }
     if (this.state.pdfInfo.length === 0) {
       return (
         <View style={styles.emptyScreenView}>

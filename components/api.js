@@ -115,7 +115,6 @@ export const openCameraApi = async () => {
   if (!bool) {
     return false;
   }
-  
   await ImagePicker.launchCamera({}, (response) => {
     if (response.didCancel) {
       // console.log('User cancelled image picker');

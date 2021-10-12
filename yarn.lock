@@ -5928,10 +5928,10 @@ react-native-gesture-handler@^1.9.0:
     invariant "^2.2.4"
     prop-types "^15.7.2"
 
-react-native-image-picker@^3.0.1:
-  version "3.0.1"
-  resolved "https://registry.yarnpkg.com/react-native-image-picker/-/react-native-image-picker-3.0.1.tgz#2b361904793ea108b61342ee25fab898de19bbdf"
-  integrity sha512-jVWiKT24jxr7K8dAixlsfHURZd+eDA4WWYeZhhKeJDGITCtFPphcTuFomTMtaWYE/gJgNTEL8TiLedcfeqJ9qw==
+react-native-image-picker@^4.1.1:
+  version "4.1.1"
+  resolved "https://registry.yarnpkg.com/react-native-image-picker/-/react-native-image-picker-4.1.1.tgz#f5b20c77b060e4a8cad4e76ae042e1e45b4743da"
+  integrity sha512-O78kljfaLQkFNzba4yWueqXlAWzDNzYUavqSQloJAf+ISGsOk95WO/a4Tp27E6hck8vPtx7u0GBrvEULyh1XAw==
 
 react-native-image-to-pdf@^1.2.0:
   version "1.2.0"

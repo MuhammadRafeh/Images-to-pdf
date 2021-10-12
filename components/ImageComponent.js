@@ -322,7 +322,8 @@ class RenderImages extends React.Component {
     }
   }
 
-  renderItem = ({ item }) => {
+  renderItem = ({ item, index }) => {
+    console.log(index)
     const windowWidth = Dimensions.get('window').width;
     const windowHeight =
       (Dimensions.get('window').height * this.props.imageSize) / 100;
@@ -356,6 +357,9 @@ class RenderImages extends React.Component {
             }}
           />
         </TouchableOpacity>
+        <View style={{ position: 'absolute', width: 30, height: 30, borderRadius: 30, justifyContent: 'center', alignItems: 'center', top: 4, left: 5, backgroundColor: 'black' }}>
+          <Text style={{ color: 'white' }}>{index + 1}</Text>
+        </View>
         <View style={{ flexDirection: 'row', justifyContent: 'center', marginVertical: 1 }}>
           <AddButtons iconName={'ios-images'} />
           <AddButtons iconName={'md-camera-sharp'} />

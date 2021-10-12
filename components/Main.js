@@ -42,12 +42,13 @@ class Main extends React.Component {
     if (makePdf === true) {
       const list = this.props.imagesPath.map(obj => obj.uri)
       try {
-        const filePath = await myAsyncPDFFunction(
+        await myAsyncPDFFunction(
           list,
           pdfName,
           this.props.pdfQuality,
         );
-        await FileViewer.open(filePath);
+        this.props.navigation.navigate('Documents')
+        // await FileViewer.open(filePath);
       } catch (e) {
         // error
       }

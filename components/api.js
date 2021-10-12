@@ -6,7 +6,7 @@ import DocumentPicker from 'react-native-document-picker';
 import {addImages} from '../Redux/actions';
 import store from '../Redux/store';
 
-let id = 0;
+let id = 1;
 
 const myAsyncPDFFunction = async (list, pdfName, pdfQuality) => {
   const namePDF = `${pdfName}.pdf`;

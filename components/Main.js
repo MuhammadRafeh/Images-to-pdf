@@ -7,7 +7,6 @@ import myAsyncPDFFunction from './api';
 
 import {
   addImages,
-  removeAllImages
 } from '../Redux/actions';
 
 import RenderImages from './ImageComponent';

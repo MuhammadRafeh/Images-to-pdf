@@ -271,11 +271,22 @@ class RenderImages extends React.Component {
     this.props.addImagesAbove({ id, listOfUri });
   };
 
-  handleAddImageBelow = async (id, index) => {
-    const listOfUri = await openGalleryApi();
-    if (!listOfUri) {
-      return;
-    } // if listOfUri is false then return simply
+  handleAddImageBelow = async (id, index, isCamera = false) => {
+    let listOfUri;
+    if (!isCamera){
+      const data = await openGalleryApi();
+
+      if (!data) {
+        return;
+      } // if data is false then return simply
+      listOfUri = data;
+    }else{    
+      const list = await openCameraApi(true);
+      if (list.length == 0) return;
+      listOfUri = list;
+    }
+    
+    
     this.props.addImagesBelow({ id, listOfUri });
     //TODO
     setTimeout(() => {
@@ -357,8 +368,8 @@ class RenderImages extends React.Component {
           <Text style={{ color: 'white' }}>{index + 1}</Text>
         </View>
         <View style={{ flexDirection: 'row', justifyContent: 'center', marginVertical: 1 }}>
-          <AddButtons iconName={'ios-images'} onPress={this.handleAddImageBelow.bind(null, item.id, index)} />
-          <AddButtons iconName={'md-camera-sharp'} />
+          <AddButtons iconName={'ios-images'} onPress={this.handleAddImageBelow.bind(null, item.id, index, false)} />
+          <AddButtons iconName={'md-camera-sharp'} onPress={this.handleAddImageBelow.bind(null, item.id, index, true)}/>
         </View>
       </>
     )

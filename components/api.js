@@ -109,14 +109,20 @@ export const openCameraApi = async (getPicData = false) => {
 
   const list = await new Promise((resolve, reject) => {
     ImagePicker.launchCamera({}, (response) => {
-      const source = { uri: response.uri };
-      if (getPicData) {
-        resolve([{uri: source.uri, id: id++}])
-        return;
+      if (response.didCancel) {
+      } else if (response.error) {
+      } else if (response.customButton) {
+      } else {
+        console.log(response)
+        const source = { uri: response.uri };
+        if (getPicData) {
+          resolve([{ uri: source.uri, id: id++ }])
+          return;
+        }
+        const result = { uri: source.uri, id: id++ };
+        store.dispatch(addImages(result));
+        resolve([])
       }
-      const result = { uri: source.uri, id: id++ };
-      store.dispatch(addImages(result));
-      resolve([])
     });
   })
 

@@ -1,9 +1,9 @@
 import RNImageToPdf from 'react-native-image-to-pdf';
-import {PermissionsAndroid} from 'react-native';
+import { PermissionsAndroid } from 'react-native';
 import ImagePicker from 'react-native-image-picker';
 import DocumentPicker from 'react-native-document-picker';
 
-import {addImages} from '../Redux/actions';
+import { addImages } from '../Redux/actions';
 import store from '../Redux/store';
 
 let id = 1;
@@ -30,63 +30,55 @@ const myAsyncPDFFunction = async (list, pdfName, pdfQuality) => {
 };
 
 // = ==================================================================================
+//PERMISSIONS
 
-const gettingPermission = async () => {
-  let cam = false;
-  let write = false;
-  try {
-    const granted = await PermissionsAndroid.request(
-      PermissionsAndroid.PERMISSIONS.CAMERA,
-      {
-        title: 'Images To PDF',
-        message:
-          'App needs access to your camera ' +
-          'so you can take awesome pictures.',
-        buttonNeutral: 'Ask Me Later',
-        buttonNegative: 'Cancel',
-        buttonPositive: 'OK',
-      },
-    );
-    if (granted === PermissionsAndroid.RESULTS.GRANTED) {
-      // console.log("You can use the camera");
-      cam = true;
-    } else {
-      // console.log("Camera permission denied");
-    }
-    // WRITE_EXTERNAL_STORAGE
-    const granteds = await PermissionsAndroid.request(
-      PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE,
-      {
-        title: 'Images To PDF',
-        message:
-          'App requires to write external storage ' +
-          'so you can make awesome documents.',
-        buttonNeutral: 'Ask Me Later',
-        buttonNegative: 'Cancel',
-        buttonPositive: 'OK',
-      },
-    );
-    if (granteds === PermissionsAndroid.RESULTS.GRANTED) {
-      // console.log("You can use the camera");
-      write = true;
-    } else {
-      // console.log("Camera permission denied");
-    }
-    if (cam && write) {
-      return true;
-    }
+const cameraPer = async () => {
+  const granted = await PermissionsAndroid.request(
+    PermissionsAndroid.PERMISSIONS.CAMERA,
+    {
+      title: 'Images To PDF',
+      message:
+        'App needs access to your camera ' +
+        'so you can take awesome pictures.',
+      buttonNeutral: 'Ask Me Later',
+      buttonNegative: 'Cancel',
+      buttonPositive: 'OK',
+    },
+  );
+  if (granted === PermissionsAndroid.RESULTS.GRANTED) {
+    return true;
+  } else {
     return false;
-  } catch (err) {
-    // console.warn(err);
+
+  }
+}
+
+
+const mediaPer = async () => {
+  const granteds = await PermissionsAndroid.request(
+    PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE,
+    {
+      title: 'Images To PDF',
+      message:
+        'App requires to write external storage ' +
+        'so you can make awesome documents.',
+      buttonNeutral: 'Ask Me Later',
+      buttonNegative: 'Cancel',
+      buttonPositive: 'OK',
+    },
+  );
+  if (granteds === PermissionsAndroid.RESULTS.GRANTED) {
+    return true;
+  } else {
     return false;
   }
-};
+}
 
 // = ==================================================================================
 
 export const openGalleryApi = async () => {
   // function return false/[{uri, id}...]
-  const bool = await gettingPermission();
+  const bool = await mediaPer();
   if (!bool) {
     return false;
   }
@@ -99,7 +91,7 @@ export const openGalleryApi = async () => {
     // console.log(res) // It will always be list
     const listOfUri = [];
     res.forEach((obj) => {
-      listOfUri.push({uri: obj.fileCopyUri, id: id++});
+      listOfUri.push({ uri: obj.fileCopyUri, id: id++ });
     });
     return listOfUri;
   } catch (e) {
@@ -111,7 +103,7 @@ export const openGalleryApi = async () => {
 
 export const openCameraApi = async () => {
   // Function return object {id, uri}
-  const bool = await gettingPermission();
+  const bool = await cameraPer();
   if (!bool) {
     return false;
   }
@@ -123,9 +115,9 @@ export const openCameraApi = async () => {
     } else if (response.customButton) {
       // console.log('User tapped custom button: ', response.customButton);
     } else {
-      const source = {uri: response.uri};
+      const source = { uri: response.uri };
 
-      const result = {uri: source.uri, id: id++};
+      const result = { uri: source.uri, id: id++ };
       store.dispatch(addImages(result));
     }
   });

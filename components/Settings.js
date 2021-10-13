@@ -4,6 +4,7 @@ import { Divider, Slider, Text, Button } from 'react-native-elements';
 import RadioForm from 'react-native-simple-radio-button';
 import propTypes from 'prop-types';
 import { connect } from 'react-redux';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 import {
   updateQuality,
@@ -32,15 +33,19 @@ class Settings extends React.PureComponent {
   handleHeaderButtonPressed = () => {
     if (this.state.pdfQuality !== this.props.quality) {
       this.props.updateQuality(this.state.pdfQuality);
+      AsyncStorage.setItem('@pdfQuality', this.state.pdfQuality.toString())
     }
 
     if (this.state.resizeMode !== this.props.resizeMode) {
       this.props.updateResizeMode(this.state.resizeMode);
+      AsyncStorage.setItem('@resizeMode', this.state.resizeMode)
     }
 
     if (this.state.imageSize !== this.props.imageSize) {
       this.props.updateImageSize(this.state.imageSize);
+      AsyncStorage.setItem('@imageSize', this.state.imageSize.toString())
     }
+    this.props.navigation.goBack();
   };
 
   headerRightButton = () => {

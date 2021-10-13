@@ -14,7 +14,7 @@ import propTypes from 'prop-types';
 import FileViewer from 'react-native-file-viewer';
 import { connect } from 'react-redux';
 
-const AddButtons = props => (
+const AddButtons = React.memo((props) => (
   <TouchableOpacity onPress={props.onPress}>
     <View style={{ width: 60, height: 60, borderRadius: 30, justifyContent: 'center', alignItems: 'center' }}>
       <View>
@@ -25,7 +25,7 @@ const AddButtons = props => (
       </View>
     </View>
   </TouchableOpacity>
-)
+))
 
 import {
   Menu,
@@ -74,6 +74,7 @@ class RenderImages extends React.Component {
   }
 
   componentDidMount() {
+    this.focusedIndex = -1;
     this.isNavigationChanged = false;
     this.resetHeader = true;
     // BackHandler.addEventListener('hardwareBackPress', this.handleBackButtonClick);
@@ -265,10 +266,16 @@ class RenderImages extends React.Component {
 
   handleMoveUp = () => {
     this.props.movePicUp(this.state.selectedIds[0]);
+    const newFocused = this.focusedIndex - 1;
+    this.ref.scrollToIndex({animated: true, index: newFocused, viewPosition: 0.5})
+    this.focusedIndex = newFocused
   };
 
   handleMoveDown = () => {
     this.props.movePicDown(this.state.selectedIds[0]);
+    const newFocused = this.focusedIndex + 1;
+    this.ref.scrollToIndex({animated: true, index: newFocused, viewPosition: 0.5})
+    this.focusedIndex = newFocused
   };
 
   handleViewImage = async (uri) => {
@@ -279,12 +286,12 @@ class RenderImages extends React.Component {
     }
   };
 
-  handleAddImageAbove = async () => {
+  handleAddImageAbove = async (id = false) => {
     const listOfUri = await openGalleryApi();
     if (!listOfUri) {
       return;
     } // if listOfUri is false then return simply
-    this.props.addImagesAbove({ id: this.state.selectedIds[0], listOfUri });
+    this.props.addImagesAbove({ id: id ? id: this.state.selectedIds[0], listOfUri });
   };
 
   handleAddImageBelow = async (id = false) => {
@@ -292,7 +299,7 @@ class RenderImages extends React.Component {
     if (!listOfUri) {
       return;
     } // if listOfUri is false then return simply
-    this.props.addImagesBelow({ id: id ? id: this.state.selectedIds[0], listOfUri });
+    this.props.addImagesBelow({ id: id ? id : this.state.selectedIds[0], listOfUri });
   };
 
   handleOnImagePress = async (id, uri) => {
@@ -314,16 +321,14 @@ class RenderImages extends React.Component {
     }
   }
 
-  handleOnImageLongPress = id => {
+  handleOnImageLongPress = (id, index) => {
     if (this.state.selectedIds.length === 0) {
-      this.setState((prevState) => ({
-        selectedIds: [...prevState.selectedIds, id]
-      }));
+      this.setState({selectedIds: [id]});
+      this.focusedIndex = index;
     }
   }
 
   renderItem = ({ item, index }) => {
-    console.log(index)
     const windowWidth = Dimensions.get('window').width;
     const windowHeight =
       (Dimensions.get('window').height * this.props.imageSize) / 100;
@@ -345,9 +350,17 @@ class RenderImages extends React.Component {
 
     return (
       <>
+        {/* {
+          index == 0 && (
+            <View style={{ flexDirection: 'row', justifyContent: 'center', marginVertical: 1 }}>
+              <AddButtons iconName={'ios-images'} onPress={this.handleAddImageAbove.bind(null, item.id)} />
+              <AddButtons iconName={'md-camera-sharp'} />
+            </View>
+          )
+        } */}
         <TouchableOpacity
           onPress={() => { this.handleOnImagePress(item.id, item.uri) }}
-          onLongPress={() => { this.handleOnImageLongPress(item.id) }}
+          onLongPress={() => { this.handleOnImageLongPress(item.id, index) }}
         >
           <Image
             style={imageStyle}
@@ -361,7 +374,7 @@ class RenderImages extends React.Component {
           <Text style={{ color: 'white' }}>{index + 1}</Text>
         </View>
         <View style={{ flexDirection: 'row', justifyContent: 'center', marginVertical: 1 }}>
-          <AddButtons iconName={'ios-images'} onPress={this.handleAddImageBelow.bind(null, item.id)}/>
+          <AddButtons iconName={'ios-images'} onPress={this.handleAddImageBelow.bind(null, item.id)} />
           <AddButtons iconName={'md-camera-sharp'} />
         </View>
       </>
@@ -376,6 +389,7 @@ class RenderImages extends React.Component {
         renderItem={this.renderItem}
         keyExtractor={(item) => item.id.toString()}
         extraData={this.state.selectedIds}
+        ref={ref => this.ref = ref}
       />
     );
   }

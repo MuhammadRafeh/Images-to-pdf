@@ -22,7 +22,8 @@ class DialogComponent extends React.Component {
   };
 
   handleDone = async () => {
-    this.props.closeDialog(false, true, this.state.pdfName);
+    if (this.state.pdfName.trim() == '') return;
+    this.props.closeDialog(false, true, this.state.pdfName.trim());
   };
 
   render() {

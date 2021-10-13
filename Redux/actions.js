@@ -7,7 +7,7 @@ export const UPDATE_RESIZE_MODE = 'UPDATE_RESIZE_MODE'
 export const ADD_IMAGES_BELOW = 'ADD_IMAGES_BELOW'
 export const ADD_IMAGES_ABOVE = 'ADD_IMAGES_ABOVE'
 export const REMOVE_IMAGES = 'REMOVE_IMAGES'
-
+export const UPDATE_ALL_SETTINGS = 'UPDATE_ALL_SETTINGS'
 // Action Creators
 export const updateQuality = (update) => ({ // update must be a float point between 0.1 to 0.9
   type: UPDATE_PDF_QUALITY,
@@ -51,5 +51,10 @@ export const addImagesAbove = (update) => ({ // Update must be an object {id: ''
 
 export const addImagesBelow = (update) => ({ // Update must be an object {id: '', listOfUri: [{}..]}
   type: ADD_IMAGES_BELOW,
+  payload: update
+})
+
+export const updateAllSettings = (update) => ({ // Update must be an object {quality, resizeMode, imageSize}
+  type: UPDATE_ALL_SETTINGS,
   payload: update
 })

@@ -9,7 +9,8 @@ import {
   UPDATE_RESIZE_MODE,
   ADD_IMAGES_ABOVE,
   ADD_IMAGES_BELOW,
-  REMOVE_IMAGES
+  REMOVE_IMAGES,
+  UPDATE_ALL_SETTINGS
 } from './actions'
 
 // Reducers for handling New Contacts & Users
@@ -108,6 +109,8 @@ const imageReducer = (state = [], action) => { //[{}, {}, {}, ........]
 
 const settingReducer = (state = { quality: 0.7, imageSize: 40, resizeMode: 'contain' }, action) => {
   switch (action.type) {
+    case UPDATE_ALL_SETTINGS:
+      return action.payload;
     case UPDATE_PDF_QUALITY:
       return { ...state, quality: action.payload }
     case UPDATE_IMAGE_SIZE:

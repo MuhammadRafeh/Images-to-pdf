@@ -302,7 +302,8 @@ class RenderImages extends React.Component {
     this.props.addImagesBelow({ id: id ? id : this.state.selectedIds[0], listOfUri });
   };
 
-  handleOnImagePress = async (id, uri) => {
+  handleOnImagePress = async (id, uri, index) => {
+    this.focusedIndex = index;
     if (this.state.selectedIds.length === 0) {
       await this.handleViewImage(uri);
       return
@@ -359,7 +360,7 @@ class RenderImages extends React.Component {
           )
         } */}
         <TouchableOpacity
-          onPress={() => { this.handleOnImagePress(item.id, item.uri) }}
+          onPress={() => { this.handleOnImagePress(item.id, item.uri, index) }}
           onLongPress={() => { this.handleOnImageLongPress(item.id, index) }}
         >
           <Image

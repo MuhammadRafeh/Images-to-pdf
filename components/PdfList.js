@@ -273,9 +273,11 @@ class PdfList extends React.Component {
         onLongPress={() => {
           this.onLongPressDoc(item.id);
         }}>
-        <Icon name="document" size={40} color="grey" />
+        <View style={{flex:0.1}}>
+          <Icon name="document" size={40} color="grey" />
+        </View>
         <View style={styles.documentView}>
-          <View style={{ width: '90%' }}>
+          <View style={{ width: '90%'}}>
             <Text style={styles.pdfName} numberOfLines={2} adjustsFontSizeToFit={true}>{item.name}</Text>
           </View>
           <Text style={styles.belowNameRow}>
@@ -354,6 +356,7 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     paddingTop: 2,
     fontSize: 15,
+    // backgroundColor: 'blue'
   },
   belowNameRow: {
     marginLeft: 10,
@@ -378,6 +381,7 @@ const styles = StyleSheet.create({
   },
   documentView: {
     flexDirection: 'column',
+    flex: 1
   },
   noDataView: {
     alignItems: 'center',

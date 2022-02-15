@@ -101,26 +101,32 @@ export const openGalleryApi = async () => {
 
 // = ===============================================================================
 
-export const openCameraApi = async () => {
-  // Function return object {id, uri}
+export const openCameraApi = async (getPicData = false) => {
   const bool = await cameraPer();
   if (!bool) {
     return false;
   }
-  await ImagePicker.launchCamera({}, (response) => {
-    if (response.didCancel) {
-      // console.log('User cancelled image picker');
-    } else if (response.error) {
-      // console.log('ImagePicker Error: ', response.error);
-    } else if (response.customButton) {
-      // console.log('User tapped custom button: ', response.customButton);
-    } else {
-      const source = { uri: response.uri };
 
-      const result = { uri: source.uri, id: id++ };
-      store.dispatch(addImages(result));
-    }
-  });
+  const list = await new Promise((resolve, reject) => {
+    ImagePicker.launchCamera({}, (response) => {
+      if (response.didCancel) {
+      } else if (response.error) {
+      } else if (response.customButton) {
+      } else {
+        console.log(response)
+        const source = { uri: response.uri };
+        if (getPicData) {
+          resolve([{ uri: source.uri, id: id++ }])
+          return;
+        }
+        const result = { uri: source.uri, id: id++ };
+        store.dispatch(addImages(result));
+        resolve([])
+      }
+    });
+  })
+
+  return list;
 };
 
 // = ===============================================================================

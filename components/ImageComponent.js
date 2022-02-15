@@ -27,13 +27,6 @@ const AddButtons = React.memo((props) => (
   </TouchableOpacity>
 ))
 
-import {
-  Menu,
-  MenuOptions,
-  MenuOption,
-  MenuTrigger,
-} from 'react-native-popup-menu';
-
 import Icon from 'react-native-vector-icons/Ionicons';
 
 import {
@@ -45,7 +38,7 @@ import {
   removeImages
 } from '../Redux/actions';
 
-import { openGalleryApi } from './api';
+import { openCameraApi, openGalleryApi } from './api';
 
 class RenderImages extends React.Component {
   static propTypes = {
@@ -139,7 +132,6 @@ class RenderImages extends React.Component {
         headerRight: () => (
           <View style={styles.headerContainerOnSelect}>
 
-
             <TouchableOpacity //up arrow key --------------------------------------------------------
               onPress={this.handleMoveUp}
               style={styles.headerRightStyle}>
@@ -160,27 +152,6 @@ class RenderImages extends React.Component {
               style={styles.headerRightStyle}>
               <Icon name="md-trash-bin" size={25} color="black" />
             </TouchableOpacity>
-
-            <View style={styles.headerRightStyle}>
-              <Menu>
-                <MenuTrigger>
-                  <Icon name="ellipsis-vertical" size={25} color="black" />
-                </MenuTrigger>
-                <MenuOptions>
-                  <View style={{ backgroundColor: 'grey', padding: 8 }}>
-                    <MenuOption onSelect={this.handleAddImageAbove}>
-                      <Text style={{ color: 'white', fontSize: 18 }}>Add Images Above</Text>
-                    </MenuOption>
-                  </View>
-                  <View style={{ height: 1, backgroundColor: 'grey' }} />
-                  <View style={{ backgroundColor: 'grey', padding: 8 }}>
-                    <MenuOption onSelect={this.handleAddImageBelow}>
-                      <Text style={{ color: 'white', fontSize: 18 }}>Add Images Below</Text>
-                    </MenuOption>
-                  </View>
-                </MenuOptions>
-              </Menu>
-            </View>
 
           </View>
         ),
@@ -267,15 +238,20 @@ class RenderImages extends React.Component {
   handleMoveUp = () => {
     this.props.movePicUp(this.state.selectedIds[0]);
     const newFocused = this.focusedIndex - 1;
-    this.ref.scrollToIndex({animated: true, index: newFocused, viewPosition: 0.5})
-    this.focusedIndex = newFocused
+    try {
+      this.ref.scrollToIndex({ animated: true, index: newFocused, viewPosition: 0.5 })
+      this.focusedIndex = newFocused
+    } catch (err) { }
+
   };
 
   handleMoveDown = () => {
     this.props.movePicDown(this.state.selectedIds[0]);
     const newFocused = this.focusedIndex + 1;
-    this.ref.scrollToIndex({animated: true, index: newFocused, viewPosition: 0.5})
-    this.focusedIndex = newFocused
+    try {
+      this.ref.scrollToIndex({ animated: true, index: newFocused, viewPosition: 0.5 })
+      this.focusedIndex = newFocused
+    } catch (err) { }
   };
 
   handleViewImage = async (uri) => {
@@ -286,24 +262,41 @@ class RenderImages extends React.Component {
     }
   };
 
-  handleAddImageAbove = async (id = false) => {
+  handleAddImageAbove = async (id) => {
+    // const listOfUri = isCamera ? await openCameraApi() : await openGalleryApi()
     const listOfUri = await openGalleryApi();
     if (!listOfUri) {
       return;
     } // if listOfUri is false then return simply
-    this.props.addImagesAbove({ id: id ? id: this.state.selectedIds[0], listOfUri });
+    this.props.addImagesAbove({ id, listOfUri });
   };
 
-  handleAddImageBelow = async (id = false) => {
-    const listOfUri = await openGalleryApi();
-    if (!listOfUri) {
-      return;
-    } // if listOfUri is false then return simply
-    this.props.addImagesBelow({ id: id ? id : this.state.selectedIds[0], listOfUri });
+  handleAddImageBelow = async (id, index, isCamera = false) => {
+    let listOfUri;
+    if (!isCamera){
+      const data = await openGalleryApi();
+
+      if (!data) {
+        return;
+      } // if data is false then return simply
+      listOfUri = data;
+    }else{    
+      const list = await openCameraApi(true);
+      if (list.length == 0) return;
+      listOfUri = list;
+    }
+    
+    
+    this.props.addImagesBelow({ id, listOfUri });
+    //TODO
+    setTimeout(() => {
+      try{
+        this.ref.scrollToIndex({ animated: true, index: index + listOfUri.length, viewPosition: 0.5 })
+      } catch(err){}
+    }, 500)
   };
 
-  handleOnImagePress = async (id, uri, index) => {
-    this.focusedIndex = index;
+  handleOnImagePress = async (id, uri) => {
     if (this.state.selectedIds.length === 0) {
       await this.handleViewImage(uri);
       return
@@ -324,7 +317,7 @@ class RenderImages extends React.Component {
 
   handleOnImageLongPress = (id, index) => {
     if (this.state.selectedIds.length === 0) {
-      this.setState({selectedIds: [id]});
+      this.setState({ selectedIds: [id] });
       this.focusedIndex = index;
     }
   }
@@ -360,7 +353,7 @@ class RenderImages extends React.Component {
           )
         } */}
         <TouchableOpacity
-          onPress={() => { this.handleOnImagePress(item.id, item.uri, index) }}
+          onPress={() => { this.handleOnImagePress(item.id, item.uri) }}
           onLongPress={() => { this.handleOnImageLongPress(item.id, index) }}
         >
           <Image
@@ -375,8 +368,8 @@ class RenderImages extends React.Component {
           <Text style={{ color: 'white' }}>{index + 1}</Text>
         </View>
         <View style={{ flexDirection: 'row', justifyContent: 'center', marginVertical: 1 }}>
-          <AddButtons iconName={'ios-images'} onPress={this.handleAddImageBelow.bind(null, item.id)} />
-          <AddButtons iconName={'md-camera-sharp'} />
+          <AddButtons iconName={'ios-images'} onPress={this.handleAddImageBelow.bind(null, item.id, index, false)} />
+          <AddButtons iconName={'md-camera-sharp'} onPress={this.handleAddImageBelow.bind(null, item.id, index, true)}/>
         </View>
       </>
     )
